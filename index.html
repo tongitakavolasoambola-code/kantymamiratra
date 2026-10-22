@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Kantymamiratra · Fivarotana boky PDF</title>
-<meta name="description" content="Fivarotana boky PDF & epub. Boky iray mira fiainana iray sy hoavy vaovao. Aloha amin'ny Mvola dia afaka mahazo boky ianao.">
+<meta name="description" content="Fivarotana boky PDF & epub. Boky iray mira fiainana iray sy hoavy vaovao. Voal kely amin'ny mvola dia afaka mahazo boky ianao.">
 <meta name="theme-color" content="#14110d">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -22,7 +22,7 @@
     </a>
     <div class="grow"></div>
     <button class="btn ghost sm hide" id="btnOrders">Baiko</button>
-    <button class="btn sm" id="btnAcct">Midira</button>
+    <button class="btn sm" id="btnAcct">Hiditra</button>
   </div>
   <nav class="nav"><div class="wrap" id="nav"></div></nav>
 </header>
@@ -237,7 +237,7 @@ function openAuth(after, startMode){
 }
 function openAccount(){
   openSheet(`<h2>Kaontiko</h2><p class="muted">${esc(state.user.email)}</p>
-    <button class="btn block" id="myOrd">Ny baiko nataoko</button>
+    <button class="btn block" id="myOrd">Ny kaomandy nataoko</button>
     <button class="btn ghost block" id="out" style="margin-top:8px">Hiala</button>`,
     () => { $("myOrd").onclick = () => { closeSheet(); showOrders(); }; $("out").onclick = async () => { await signOut(auth); closeSheet(); toast("Tafaboaka"); }; });
 }
@@ -268,7 +268,7 @@ function startBuy(b){
     <button class="btn block" id="bSend">Alefa ny baiko</button>
     <p class="muted small" style="margin-top:10px">Hojerena ny SMS MVola. Rehefa voamarina dia hiseho ao amin'ny « Baiko » ny rohy hanaovana ny boky.</p>`,
     () => {
-      $("cp").onclick = async () => { try { await navigator.clipboard.writeText(MVOLA_NUMBER.replace(/\s/g, "")); toast("Voakopia ny laharana"); } catch { toast("Tsy afaka nakopia: soraty tanana"); } };
+      $("cp").onclick = async () => { try { await navigator.clipboard.writeText(MVOLA_NUMBER.replace(/\s/g, "")); toast("Voakopia ny laharana"); } catch { toast("Tsy afaka kopiena: soraty tanana"); } };
       $("bSend").onclick = async () => {
         const phone = $("bPhone").value.trim(), ref = $("bRef").value.trim();
         if (phone.replace(/\D/g, "").length < 9) return toast("Soraty tsara ny laharana MVola.");
@@ -306,8 +306,8 @@ async function loadOrders(){
       return `<div class="card ord"><div class="t"><div><b>${esc(o.bookTitle)}</b><div class="muted small">${money(o.amount)} · ${dt}</div></div><span class="tag ${esc(o.status)}">${LBL[o.status] || esc(o.status)}</span></div>
         ${o.status === "paid" && u ? `<a class="btn block" style="margin-top:12px" href="${esc(u)}" target="_blank" rel="noopener">⬇ Sokafy / alaina ny PDF</a>` : ""}
         ${o.status === "pending" ? `<p class="muted small" style="margin:10px 0 0">Miandry ny fanamarinana ny fandoavana. Avereno jerena afaka fotoana fohy.</p>` : ""}
-        ${o.status === "rejected" ? `<p class="muted small" style="margin:10px 0 0">Tsy hita ny fandoavana. Hamarino ny référence dia manaova baiko vaovao.</p>` : ""}</div>`;
-    }).join("") : `<div class="empty">Tsy mbola misy baiko.</div>`;
+        ${o.status === "rejected" ? `<p class="muted small" style="margin:10px 0 0">Tsy hita ny fandoavana. Hamarino ny référence dia manaova kaomandy vaovao.</p>` : ""}</div>`;
+    }).join("") : `<div class="empty">Tsy mbola misy kaomandy.</div>`;
   } catch (e) { box.innerHTML = `<div class="empty">${esc(errMsg(e))}</div>`; }
 }
 
