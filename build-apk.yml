@@ -1,0 +1,173 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-apk.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Create Android project (WebView around the site)
+        run: |
+          set -e
+          test -f icon-192.png
+          mkdir -p android/app/src/main/java/mg/kantymamiratra/app android/app/src/main/res/mipmap-xxxhdpi
+          cp icon-192.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+
+          cat > android/settings.gradle <<'EOF'
+          pluginManagement {
+            repositories { google(); mavenCentral(); gradlePluginPortal() }
+          }
+          dependencyResolutionManagement {
+            repositories { google(); mavenCentral() }
+          }
+          rootProject.name = 'Kantymamiratra'
+          include ':app'
+          EOF
+
+          cat > android/build.gradle <<'EOF'
+          plugins { id 'com.android.application' version '8.5.2' apply false }
+          EOF
+
+          cat > android/gradle.properties <<'EOF'
+          org.gradle.jvmargs=-Xmx2g
+          android.useAndroidX=false
+          EOF
+
+          cat > android/app/build.gradle <<'EOF'
+          plugins { id 'com.android.application' }
+          android {
+            namespace 'mg.kantymamiratra.app'
+            compileSdk 34
+            defaultConfig {
+              applicationId 'mg.kantymamiratra.app'
+              minSdk 24
+              targetSdk 34
+              versionCode 1
+              versionName '1.0'
+            }
+            compileOptions {
+              sourceCompatibility JavaVersion.VERSION_17
+              targetCompatibility JavaVersion.VERSION_17
+            }
+          }
+          EOF
+
+          cat > android/app/src/main/AndroidManifest.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <application
+                android:label="Kantymamiratra"
+                android:icon="@mipmap/ic_launcher"
+                android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"
+                android:allowBackup="true">
+              <activity
+                  android:name=".MainActivity"
+                  android:exported="true"
+                  android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout">
+                <intent-filter>
+                  <action android:name="android.intent.action.MAIN" />
+                  <category android:name="android.intent.category.LAUNCHER" />
+                </intent-filter>
+              </activity>
+            </application>
+          </manifest>
+          EOF
+
+          cat > android/app/src/main/java/mg/kantymamiratra/app/MainActivity.java <<'EOF'
+          package mg.kantymamiratra.app;
+
+          import android.app.Activity;
+          import android.content.Intent;
+          import android.graphics.Color;
+          import android.net.Uri;
+          import android.os.Bundle;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebResourceError;
+          import android.webkit.WebResourceRequest;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+
+          public class MainActivity extends Activity {
+            static final String HOST = "tongitakavolasoambola-code.github.io";
+            static final String HOME = "https://" + HOST + "/kantymamiratra/";
+            WebView web;
+
+            @Override
+            protected void onCreate(Bundle b) {
+              super.onCreate(b);
+              getWindow().setStatusBarColor(Color.parseColor("#14110d"));
+              web = new WebView(this);
+              setContentView(web);
+              WebSettings s = web.getSettings();
+              s.setJavaScriptEnabled(true);
+              s.setDomStorageEnabled(true);
+              s.setUserAgentString(s.getUserAgentString() + " KantyApp");
+              web.setWebChromeClient(new WebChromeClient());
+              web.setWebViewClient(new WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
+                  Uri u = r.getUrl();
+                  if (HOST.equals(u.getHost())) return false;
+                  try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception e) { }
+                  return true;
+                }
+                @Override
+                public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
+                  if (r.isForMainFrame()) {
+                    v.loadDataWithBaseURL(HOME,
+                      "<html><body style='font-family:sans-serif;text-align:center;padding:40px'>"
+                      + "<h2>Tsy misy internet</h2><p>Hamarino ny connexion dia avereno.</p>"
+                      + "<button style='font-size:18px;padding:12px 24px' onclick=\"location.href='" + HOME + "'\">Avereno</button>"
+                      + "</body></html>", "text/html", "utf-8", null);
+                  }
+                }
+              });
+              if (b == null || web.restoreState(b) == null) web.loadUrl(HOME);
+            }
+
+            @Override
+            protected void onSaveInstanceState(Bundle out) {
+              super.onSaveInstanceState(out);
+              web.saveState(out);
+            }
+
+            @Override
+            public void onBackPressed() {
+              if (web.canGoBack()) web.goBack(); else super.onBackPressed();
+            }
+          }
+          EOF
+
+      - name: Build APK
+        working-directory: android
+        run: gradle assembleDebug --no-daemon
+
+      - name: Publish app.apk to GitHub Releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk app.apk
+          gh release create "v1.${{ github.run_number }}" app.apk \
+            --title "Kantymamiratra Android v1.${{ github.run_number }}" \
+            --notes "Application Android (app.apk). Alao ary apetaho amin'ny finday."
