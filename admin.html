@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="mg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Admin · Kantymamiratra</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#b4532a">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap row">
+    <a class="brand" href="./admin.html"><span class="logo">🔐</span>Admin</a>
+    <div class="grow"></div>
+    <a class="btn ghost sm" href="./">Site</a>
+    <button class="btn ghost sm hide" id="out">Hiala</button>
+  </div>
+</header>
+
+<main class="wrap" style="padding-top:18px;padding-bottom:40px">
+  <div id="auth" class="card" style="max-width:420px;margin:20px auto">
+    <h2>Fidirana Admin</h2>
+    <input id="email" type="email" placeholder="Email Admin" autocomplete="email">
+    <input id="pass" type="password" placeholder="Teny miafina" autocomplete="current-password">
+    <button class="btn block" id="login" style="margin-top:8px">Midira</button>
+    <p id="msg" style="color:var(--bad);font-size:14px"></p>
+  </div>
+
+  <div id="panel" class="hide">
+    <div class="tabs" id="tabs">
+      <button data-t="pending" class="on">Baiko <span id="cnt"></span></button>
+      <button data-t="books">Boky</button>
+      <button data-t="history">Tantara</button>
+    </div>
+
+    <section id="tPending"></section>
+
+    <section id="tBooks" class="hide">
+      <div class="card">
+        <h3 id="formTitle">Hanampy boky</h3>
+        <label>Lohateny</label><input id="fTitle" placeholder="Lohateny">
+        <label>Mpanoratra</label><input id="fAuthor" placeholder="Mpanoratra">
+        <label>Sokajy</label><input id="fCat" placeholder="oh. Hira, Fiainana, Fianarana">
+        <label>Vidiny (Ar)</label><input id="fPrice" type="number" inputmode="numeric" placeholder="5000">
+        <label>Rohy sary fonosana (https://…)</label><input id="fCover" placeholder="https://…">
+        <label>Fanazavana fohy</label><textarea id="fDesc" placeholder="Momba ny boky"></textarea>
+        <label>Rohy PDF (tsy ampahibemaso: Drive/R2)</label><input id="fPdf" placeholder="https://…">
+        <div class="row" style="margin-top:8px"><button class="btn grow" id="fSave">Tehirizo</button><button class="btn ghost hide" id="fCancel">Foano</button></div>
+      </div>
+      <div id="bookList"></div>
+    </section>
+
+    <section id="tHistory" class="hide"></section>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script type="module">
+import { firebaseConfig } from "./firebase-config.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, getDocs, addDoc, setDoc, updateDoc, deleteDoc, getDoc, doc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app), db = getFirestore(app);
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl = u => /^https:\/\//i.test(String(u || "").trim()) ? String(u).trim() : "";
+const money = n => Number(n || 0).toLocaleString("fr-FR") + " Ar";
+const fmt = o => o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }) : "";
+function toast(msg){ const d = document.createElement("div"); d.textContent = msg; $("toast").appendChild(d); setTimeout(() => d.remove(), 3200); }
+
+let orders = [], books = [], editId = null;
+
+/* ---------- Auth ---------- */
+$("login").onclick = () => {
+  $("msg").textContent = "";
+  signInWithEmailAndPassword(auth, $("email").value.trim(), $("pass").value).catch(e => $("msg").textContent = "Diso ny email na ny teny miafina.");
+};
+$("out").onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, async user => {
+  if (!user) { $("auth").classList.remove("hide"); $("panel").classList.add("hide"); $("out").classList.add("hide"); return; }
+  let ok = false;
+  try { ok = (await getDoc(doc(db, "admins", user.uid))).exists(); } catch {}
+  if (!ok) { $("msg").textContent = "Tsy Admin ity kaonty ity."; await signOut(auth); return; }
+  $("auth").classList.add("hide"); $("panel").classList.remove("hide"); $("out").classList.remove("hide");
+  await refreshAll();
+});
+
+/* ---------- Tabs ---------- */
+$("tabs").onclick = e => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
+  $("tPending").classList.toggle("hide", b.dataset.t !== "pending");
+  $("tBooks").classList.toggle("hide", b.dataset.t !== "books");
+  $("tHistory").classList.toggle("hide", b.dataset.t !== "history");
+};
+
+async function refreshAll(){
+  const [o, b] = await Promise.all([getDocs(collection(db, "orders")), getDocs(collection(db, "books"))]);
+  orders = o.docs.map(d => ({ id: d.id, ...d.data() })).sort((x, y) => (y.createdAt?.seconds || 0) - (x.createdAt?.seconds || 0));
+  books = b.docs.map(d => ({ id: d.id, ...d.data() })).sort((x, y) => (y.createdAt?.seconds || 0) - (x.createdAt?.seconds || 0));
+  renderPending(); renderHistory(); renderBooks();
+}
+
+/* ---------- Orders ---------- */
+function renderPending(){
+  const list = orders.filter(o => o.status === "pending");
+  $("cnt").textContent = list.length ? `(${list.length})` : "";
+  const refs = {}; orders.forEach(o => { const k = String(o.mvolaRef || "").trim().toLowerCase(); refs[k] = (refs[k] || 0) + 1; });
+  $("tPending").innerHTML = list.length ? list.map(o => {
+    const dup = refs[String(o.mvolaRef || "").trim().toLowerCase()] > 1;
+    return `<div class="card ord" data-id="${esc(o.id)}">
+      <div class="t"><div><b>${esc(o.bookTitle)}</b><div class="muted small">${fmt(o)}</div></div><b class="price">${money(o.amount)}</b></div>
+      <p style="margin:10px 0 4px" class="small">${esc(o.email)}<br>Tel: <b>${esc(o.phone)}</b><br>Réf MVola: <b>${esc(o.mvolaRef)}</b></p>
+      ${dup ? `<div class="dup">⚠ Efa nampiasaina ity référence ity amin'ny baiko hafa.</div>` : ""}
+      <div class="row" style="margin-top:10px"><button class="btn ok grow" data-act="ok">Valider</button><button class="btn bad grow" data-act="no">Refuser</button></div></div>`;
+  }).join("") : `<div class="empty">Tsy misy baiko miandry. ✅</div>`;
+}
+$("tPending").onclick = async e => {
+  const btn = e.target.closest("[data-act]"); if (!btn) return;
+  const id = btn.closest("[data-id]").dataset.id, o = orders.find(x => x.id === id); if (!o) return;
+  btn.disabled = true;
+  try {
+    if (btn.dataset.act === "ok") {
+      const f = await getDoc(doc(db, "bookFiles", o.bookId));
+      if (!f.exists() || !safeUrl(f.data().pdfUrl)) { toast("Tsy misy rohy PDF mety ho an'ity boky ity."); btn.disabled = false; return; }
+      await setDoc(doc(db, "deliveries", id), { uid: o.uid, pdfUrl: f.data().pdfUrl });
+      await updateDoc(doc(db, "orders", id), { status: "paid" });
+      toast("Voamarina ✅");
+    } else {
+      if (!confirm("Lavina ve ity baiko ity?")) { btn.disabled = false; return; }
+      await updateDoc(doc(db, "orders", id), { status: "rejected" });
+      toast("Nolavina");
+    }
+    await refreshAll();
+  } catch (err) { toast("Hadisoana: " + (err.code || err.message)); btn.disabled = false; }
+};
+function renderHistory(){
+  const list = orders.filter(o => o.status !== "pending");
+  $("tHistory").innerHTML = list.length ? list.map(o => `<div class="card ord">
+    <div class="t"><div><b>${esc(o.bookTitle)}</b><div class="muted small">${fmt(o)} · ${esc(o.email)}</div><div class="muted small">Réf: ${esc(o.mvolaRef)} · ${esc(o.phone)}</div></div>
+    <div style="text-align:right"><span class="tag ${esc(o.status)}">${o.status === "paid" ? "Voamarina" : "Nolavina"}</span><div class="price small" style="margin-top:4px">${money(o.amount)}</div></div></div></div>`).join("") : `<div class="empty">Tsy mbola misy tantara.</div>`;
+}
+
+/* ---------- Books ---------- */
+function renderBooks(){
+  $("bookList").innerHTML = books.length ? books.map(b => `<div class="card row" data-id="${esc(b.id)}">
+    <div class="grow"><b>${esc(b.title)}</b><div class="muted small">${esc(b.author || "")} ${b.category ? "· " + esc(b.category) : ""}</div><div class="price">${money(b.price)}</div></div>
+    <button class="btn ghost sm" data-act="edit">Ovay</button><button class="btn bad sm" data-act="del">Fafao</button></div>`).join("") : `<div class="empty">Tsy mbola misy boky.</div>`;
+}
+function resetForm(){
+  editId = null; ["fTitle","fAuthor","fCat","fPrice","fCover","fDesc","fPdf"].forEach(i => $(i).value = "");
+  $("formTitle").textContent = "Hanampy boky"; $("fCancel").classList.add("hide"); $("fSave").textContent = "Tehirizo";
+}
+$("fCancel").onclick = resetForm;
+$("fSave").onclick = async () => {
+  const data = { title: $("fTitle").value.trim(), author: $("fAuthor").value.trim(), category: $("fCat").value.trim(),
+    price: Number($("fPrice").value), cover: $("fCover").value.trim(), description: $("fDesc").value.trim() };
+  const pdf = $("fPdf").value.trim();
+  if (!data.title || !(data.price > 0)) return toast("Fenoy ny lohateny sy ny vidiny.");
+  if (!safeUrl(pdf)) return toast("Ny rohy PDF dia tsy maintsy manomboka amin'ny https://");
+  if (data.cover && !safeUrl(data.cover)) return toast("Tsy mety ny rohy sary (https://).");
+  $("fSave").disabled = true;
+  try {
+    if (editId) { await updateDoc(doc(db, "books", editId), data); await setDoc(doc(db, "bookFiles", editId), { pdfUrl: pdf }); }
+    else { const r = await addDoc(collection(db, "books"), { ...data, createdAt: serverTimestamp() }); await setDoc(doc(db, "bookFiles", r.id), { pdfUrl: pdf }); }
+    toast("Voatahiry ✅"); resetForm(); await refreshAll();
+  } catch (e) { toast("Hadisoana: " + (e.code || e.message)); }
+  $("fSave").disabled = false;
+};
+$("bookList").onclick = async e => {
+  const btn = e.target.closest("[data-act]"); if (!btn) return;
+  const id = btn.closest("[data-id]").dataset.id, b = books.find(x => x.id === id); if (!b) return;
+  if (btn.dataset.act === "edit") {
+    editId = id; $("fTitle").value = b.title || ""; $("fAuthor").value = b.author || ""; $("fCat").value = b.category || "";
+    $("fPrice").value = b.price || ""; $("fCover").value = b.cover || ""; $("fDesc").value = b.description || "";
+    try { const f = await getDoc(doc(db, "bookFiles", id)); $("fPdf").value = f.exists() ? f.data().pdfUrl : ""; } catch {}
+    $("formTitle").textContent = "Hanova boky"; $("fCancel").classList.remove("hide"); $("fSave").textContent = "Tehirizo ny fanovana";
+    scrollTo({ top: 0, behavior: "smooth" });
+  } else if (confirm(`Fafana tanteraka ve ny « ${b.title} » ?`)) {
+    try { await deleteDoc(doc(db, "books", id)); await deleteDoc(doc(db, "bookFiles", id)); toast("Voafafa"); await refreshAll(); }
+    catch (err) { toast("Hadisoana: " + (err.code || err.message)); }
+  }
+};
+</script>
+</body>
+</html>
