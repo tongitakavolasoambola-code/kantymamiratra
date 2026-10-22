@@ -1,0 +1,8 @@
+{
+  "name": "Kantymamiratra",
+  "short_name": "Kantymamiratra",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a73e8"
+}

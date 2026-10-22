@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="mg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kantymamiratra</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a73e8">
+<style>
+body{font-family:system-ui,sans-serif;margin:0;background:#f5f6f8;color:#222}
+header{background:#1a73e8;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+main{max-width:640px;margin:auto;padding:14px}
+.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px #0002}
+.card img{max-width:100%;border-radius:8px}
+input,button{font-size:16px;padding:10px;border-radius:8px;border:1px solid #ccc;width:100%;box-sizing:border-box;margin:4px 0}
+button{background:#1a73e8;color:#fff;border:0;cursor:pointer}
+button.alt{background:#eee;color:#222}
+.tag{padding:2px 8px;border-radius:99px;font-size:13px}
+.pending{background:#fff3cd}.paid{background:#d4edda}.rejected{background:#f8d7da}
+.hide{display:none}
+</style>
+</head>
+<body>
+<header><b>📚 Kantymamiratra</b><span id="who"></span></header>
+<main>
+  <div id="auth" class="card">
+    <h3>Midira / Hamorona kaonty</h3>
+    <input id="email" type="email" placeholder="Email">
+    <input id="pass" type="password" placeholder="Teny miafina (6+ litera)">
+    <button id="login">Midira</button>
+    <button id="signup" class="alt">Hamorona kaonty</button>
+    <p id="msg" style="color:#c00"></p>
+  </div>
+
+  <div id="app" class="hide">
+    <button id="logout" class="alt">Hiala</button>
+    <h3>Boky</h3>
+    <div id="books"></div>
+    <h3>Ny baiko nataoko</h3>
+    <div id="orders"></div>
+  </div>
+</main>
+
+<script type="module">
+import { firebaseConfig, MVOLA_NUMBER } from "./firebase-config.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut }
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, getDocs, addDoc, query, where, getDoc, doc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app), db = getFirestore(app);
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+$("login").onclick = () => signInWithEmailAndPassword(auth, $("email").value, $("pass").value).catch(e => $("msg").textContent = e.message);
+$("signup").onclick = () => createUserWithEmailAndPassword(auth, $("email").value, $("pass").value).catch(e => $("msg").textContent = e.message);
+$("logout").onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, async user => {
+  $("auth").classList.toggle("hide", !!user);
+  $("app").classList.toggle("hide", !user);
+  $("who").textContent = user ? user.email : "";
+  if (user) { await loadBooks(); await loadOrders(); }
+});
+
+async function loadBooks() {
+  const snap = await getDocs(collection(db, "books"));
+  $("books").innerHTML = "";
+  snap.forEach(d => {
+    const b = d.data();
+    const el = document.createElement("div");
+    el.className = "card";
+    el.innerHTML = `${b.cover ? `<img src="${esc(b.cover)}" alt="">` : ""}
+      <h4>${esc(b.title)}</h4><p><b>${esc(b.price)} Ar</b></p>
+      <button>Hividy</button>
+      <div class="hide pay">
+        <p>1) Alefaso ny <b>${esc(b.price)} Ar</b> amin'ny MVola: <b>${esc(MVOLA_NUMBER)}</b><br>
+        2) Fenoy ny momba ny fandoavana:</p>
+        <input class="phone" placeholder="Laharana MVola nandefa">
+        <input class="ref" placeholder="Référence transaction (ao amin'ny SMS)">
+        <button class="send">Alefa ny baiko</button>
+      </div>`;
+    const pay = el.querySelector(".pay");
+    el.querySelector("button").onclick = () => pay.classList.toggle("hide");
+    el.querySelector(".send").onclick = async () => {
+      const phone = el.querySelector(".phone").value.trim();
+      const ref = el.querySelector(".ref").value.trim();
+      if (!phone || !ref) return alert("Fenoy ny saha rehetra");
+      await addDoc(collection(db, "orders"), {
+        uid: auth.currentUser.uid, email: auth.currentUser.email,
+        bookId: d.id, bookTitle: b.title, amount: Number(b.price),
+        phone, mvolaRef: ref, status: "pending", createdAt: serverTimestamp()
+      });
+      alert("Voaray ny baikonao. Miandrasa ny fanamarinana.");
+      pay.classList.add("hide"); loadOrders();
+    };
+    $("books").appendChild(el);
+  });
+}
+
+async function loadOrders() {
+  const q = query(collection(db, "orders"), where("uid", "==", auth.currentUser.uid));
+  const snap = await getDocs(q);
+  $("orders").innerHTML = snap.empty ? "<p>Tsy mbola misy baiko.</p>" : "";
+  for (const d of snap.docs) {
+    const o = d.data();
+    let dl = "";
+    if (o.status === "paid") {
+      const del = await getDoc(doc(db, "deliveries", d.id));
+      if (del.exists()) dl = `<a href="${esc(del.data().pdfUrl)}" target="_blank" rel="noopener">⬇ Alaina ny PDF</a>`;
+    }
+    const lbl = { pending: "Miandry", paid: "Voamarina", rejected: "Nolavina" }[o.status] || o.status;
+    $("orders").insertAdjacentHTML("beforeend",
+      `<div class="card"><b>${esc(o.bookTitle)}</b> — ${esc(o.amount)} Ar
+       <span class="tag ${esc(o.status)}">${lbl}</span><br>${dl}</div>`);
+  }
+}
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+</script>
+</body>
+</html>
