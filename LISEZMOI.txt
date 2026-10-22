@@ -1,0 +1,13 @@
+KANTYMAMIRATRA - rakitra rehetra ho an'ny GitHub
+
+Apetaho ao amin'ny faritra FOTOANA (root) ao amin'ny repository ireto:
+  index.html  admin.html  style.css  sw.js  manifest.json  firebase-config.js
+  icon-192.png  icon-512.png  icon-maskable-512.png  apple-touch-icon.png  favicon-32.png
+
+Workflow APK (raha mbola tsy napetraka na tsy mbola vaovao):
+  .github/workflows/build-apk.yml   -> ao amin'ny GitHub: Add file > Create new file,
+                                       anarana ".github/workflows/build-apk.yml", apetaho ny votoatiny.
+
+Tsy ilaina ao amin'ny GitHub (fampiasana manokana ihany):
+  firestore.rules  (efa napetraka ao amin'ny Firebase)
+  assets/  (splash, icon-1024, icon.svg)
