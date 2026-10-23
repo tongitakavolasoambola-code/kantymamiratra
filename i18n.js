@@ -2,12 +2,12 @@
 const D = {
 mg: {
   "title": "Kantymamiratra · Fivarotana boky PDF",
-  "meta.desc": "Fivarotana boky PDF. Mividy amin'ny MVola ary alao avy hatrany ny boky.",
-  "nav.home": "Akaikika", "nav.books": "Boky", "nav.orders": "Baiko",
-  "acct.login": "Midira", "acct.me": "Kaontiko",
-  "hero.h1": "Ny boky tianao, alaina avy hatrany.",
-  "hero.p": "Mividy amin'ny MVola ary rehefa voamarina ny fandoavanao dia hiseho ao amin'ny kaontinao ny boky PDF.",
-  "hero.browse": "Jereo ny boky", "hero.signup": "Hamorona kaonty", "hero.myorders": "Ny baikoko",
+  "meta.desc": "Fivarotana boky miafina sy rare. Mividy amin'ny MVola ary alao avy hatrany ny boky.",
+  "nav.home": "Fandraisana", "nav.books": "Boky", "nav.orders": "Baiko",
+  "acct.login": "Miditra", "acct.me": "Kaontiko",
+  "hero.h1": "Ny boky iray, fiainana vaovao iray.",
+  "hero.p": "Mividy fiainana vaovao sady mamboly fahombiazana raha vao mividy boky ianao iray ianao","Aloa amin'ny Mvola ka rehefa voamarina ny fandoavanao dia hiseho ao amin'ny kaontinao ny boky PDF.",
+  "hero.browse": "Jereo ny boky", "hero.signup": "Hamorona kaonty", "hero.myorders": "Kaomandiko",
   "search.ph": "Hitady boky na mpanoratra…",
   "banner.title": "Alao ny application", "banner.sub": "Haingana kokoa ary mora tadiavina", "banner.install": "Apetaho",
   "feat.title": "Izao no tokangaiha anay", "all.title": "Ny boky rehetra", "chip.all": "Rehetra",
