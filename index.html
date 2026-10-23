@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Kantymamiratra · Fivarotana boky PDF</title>
-<meta name="description" content="Fivarotana boky PDF & epub. Boky iray mira fiainana iray sy hoavy vaovao. Voal kely amin'ny mvola dia afaka mahazo boky ianao.">
+<title data-i="title">Kantymamiratra · Fivarotana boky PDF</title>
+<meta name="description" data-ic="meta.desc" content="Fivarotana boky PDF. Mividy amin'ny MVola ary alao avy hatrany ny boky.">
 <meta name="theme-color" content="#14110d">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -14,48 +14,49 @@
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="lg" viewBox="0 0 64 64"><rect x="12" y="6" width="40" height="52" rx="6" fill="#c9a24b"/><path d="M18 6h-0a6 6 0 0 0-6 6v40a6 6 0 0 0 6 6h2V6z" fill="#a07c2e"/><circle cx="35" cy="26" r="6.5" fill="#14110d"/><path d="M31.6 30h6.8l2.4 15H29.2z" fill="#14110d"/></symbol></svg>
 <div id="splash" aria-hidden="true"><svg viewBox="0 0 64 64"><use href="#lg"/></svg><h1>Boky Secret</h1><i></i><p>Kantymamiratra</p></div>
+
 <header class="top">
   <div class="wrap row">
-    <a class="brand" href="./" id="home">
-      <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#lg"/></svg>
-      Kantymamiratra
-    </a>
+    <a class="brand" href="./" id="home"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#lg"/></svg><span>Kantymamiratra</span></a>
     <div class="grow"></div>
-    <button class="btn ghost sm hide" id="btnOrders">Baiko</button>
-    <button class="btn sm" id="btnAcct">Hiditra</button>
+    <div class="lang" role="group" aria-label="Langue / Fiteny"><button data-l="mg">MG</button><button data-l="fr">FR</button></div>
+    <button class="btn sm" id="btnAcct" data-i="acct.login">Midira</button>
   </div>
   <nav class="nav"><div class="wrap" id="nav"></div></nav>
 </header>
 
 <div id="catalog">
   <section class="hero2">
-    <div class="wrap">
-      <h1> Boky taloha,boky miafina sy tsy fahita, alao eto.</h1>
-      <p>Mividy amin'ny MVola ary rehefa voamarina ny fandoavanao dia hiseho ao amin'ny kaontinao ny boky PDF.</p>
-      <div class="cta">
-        <button class="btn" id="heroBrowse">Jereo ny boky</button>
-        <button class="btn ghost" id="heroAcct">Hamorona kaonty</button>
+    <div class="wrap hero-in">
+      <div>
+        <h1 data-i="hero.h1">Ny boky tianao, alaina avy hatrany.</h1>
+        <p data-i="hero.p"></p>
+        <div class="cta">
+          <button class="btn" id="heroBrowse" data-i="hero.browse"></button>
+          <button class="btn ghost" id="heroAcct" data-i="hero.signup"></button>
+        </div>
+        <div class="search"><span>🔎</span><input id="q" type="search" data-ip="search.ph" autocomplete="off"></div>
       </div>
-      <div class="search"><span>🔎</span><input id="q" type="search" placeholder="Hitady boky na mpanoratra…" autocomplete="off"></div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox="0 0 64 64"><use href="#lg"/></svg></div>
     </div>
   </section>
 
   <main class="wrap">
     <div id="banner" class="banner hide">
       <span style="font-size:26px">📱</span>
-      <div class="grow"><b>Alao ny application</b><span class="muted small">Haingana kokoa ary mora tadiavina</span></div>
+      <div class="grow"><b data-i="banner.title"></b><span class="muted small" data-i="banner.sub"></span></div>
       <a class="btn sm" id="apkLink" href="https://github.com/tongitakavolasoambola-code/kantymamiratra/releases/latest/download/app.apk">Android</a>
-      <button class="btn ghost sm hide" id="pwaBtn">Apetaho</button>
-      <button class="x" id="bannerX" aria-label="Akatony">×</button>
+      <button class="btn ghost sm hide" id="pwaBtn" data-i="banner.install"></button>
+      <button class="x" id="bannerX" aria-label="×">×</button>
     </div>
 
     <section class="sec hide" id="featured">
-      <h2 class="sec-title">Izao no tokangaiha anay</h2>
+      <h2 class="sec-title" data-i="feat.title"></h2>
       <div class="grid" id="featGrid"></div>
     </section>
 
     <section class="sec" id="all">
-      <h2 class="sec-title">Ny boky rehetra</h2>
+      <h2 class="sec-title" data-i="all.title"></h2>
       <div class="chips" id="chips"></div>
       <div class="grid" id="grid"></div>
     </section>
@@ -63,26 +64,27 @@
 </div>
 
 <main class="wrap hide" id="ordersView">
-  <div class="row" style="padding:26px 0 12px"><h2 style="margin:0;font-size:28px">Ny baiko nataoko</h2><div class="grow"></div><button class="btn ghost sm" id="refresh">Havaozy</button></div>
+  <div class="row" style="padding:26px 0 12px"><h2 style="margin:0;font-size:28px" data-i="orders.title"></h2><div class="grow"></div><button class="btn ghost sm" id="refresh" data-i="refresh"></button></div>
   <div id="orders" style="min-height:40vh"></div>
 </main>
 
 <footer>
   <div class="wrap">
     <div class="cols">
-      <div><h4>Kantymamiratra</h4><div>Fivarotana boky PDF. Mora, haingana ary azo antoka.</div></div>
-      <div><h4>Rohy</h4><a data-f="home">Akaikika</a><a data-f="all">Ny boky rehetra</a><a data-f="orders">Ny baikoko</a></div>
-      <div><h4>Fandoavana</h4><div>MVola</div><div class="small">Hojerena ny SMS ary hamarinina ny baikonao.</div></div>
+      <div><h4>Kantymamiratra</h4><div data-i="foot.about"></div></div>
+      <div><h4 data-i="foot.links"></h4><a data-f="home" data-i="nav.home"></a><a data-f="all" data-i="all.title"></a><a data-f="orders" data-i="nav.orders"></a></div>
+      <div><h4 data-i="foot.pay"></h4><div>MVola</div><div class="small" id="payNote"></div></div>
     </div>
     <div class="copy">© Kantymamiratra</div>
   </div>
 </footer>
 
-<div id="sheet" class="sheet hide"><div class="bg" id="sheetBg"></div><div class="panel"><button class="close" id="sheetX" aria-label="Akatony">×</button><div id="sheetBody"></div></div></div>
+<div id="sheet" class="sheet hide"><div class="bg" id="sheetBg"></div><div class="panel"><button class="close" id="sheetX" aria-label="×">×</button><div id="sheetBody"></div></div></div>
 <div id="toast"></div>
 
 <script type="module">
-import { firebaseConfig, MVOLA_NUMBER } from "./firebase-config.js";
+import { firebaseConfig, MVOLA_NUMBER, PAYMENT_MODE, WORKER_URL } from "./firebase-config.js";
+import { t, getLang, initLang } from "./i18n.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail }
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
@@ -95,39 +97,32 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeUrl = u => /^https:\/\//i.test(String(u || "").trim()) ? String(u).trim() : "";
 const money = n => Number(n || 0).toLocaleString("fr-FR") + " Ar";
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 const store = { get(k){ try{ return localStorage.getItem(k); }catch{ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch{} } };
+const AUTO = PAYMENT_MODE === "auto" && /^https:\/\//.test(WORKER_URL || "");
 
-const state = { user: null, books: [], cat: "Rehetra", q: "", after: null };
+const state = { user: null, books: [], cat: "", q: "", after: null, run: 0, view: "catalog" };
 
-const ERR = {
-  "auth/invalid-credential": "Diso ny email na ny teny miafina.",
-  "auth/invalid-email": "Tsy mety ny email.",
-  "auth/missing-password": "Soraty ny teny miafina.",
-  "auth/email-already-in-use": "Efa misy kaonty amin'io email io.",
-  "auth/weak-password": "Fohy loatra ny teny miafina (6 litera farafahakeliny).",
-  "auth/network-request-failed": "Tsy misy internet.",
-  "auth/too-many-requests": "Be loatra ny andrana. Miandrasa kely dia avereno.",
-  "permission-denied": "Tsy mahazo manao izany."
+const errMsg = e => {
+  const c = e.code || e.message || "";
+  const k = "err." + c; const m = t(k);
+  return m !== k ? m : t("err.generic", { c });
 };
-const errMsg = e => ERR[e.code] || ("Nisy hadisoana: " + (e.code || e.message));
-function toast(msg){ const d = document.createElement("div"); d.textContent = msg; $("toast").appendChild(d); setTimeout(() => d.remove(), 3200); }
+function toast(msg){ const d = document.createElement("div"); d.textContent = msg; $("toast").appendChild(d); setTimeout(() => d.remove(), 3400); }
 
 /* ---------- Sheet ---------- */
-function openSheet(html, mount){ $("sheetBody").innerHTML = html; $("sheet").classList.remove("hide"); if (mount) mount(); }
-function closeSheet(){ $("sheet").classList.add("hide"); $("sheetBody").innerHTML = ""; }
+function openSheet(html, mount){ state.run++; $("sheetBody").innerHTML = html; $("sheet").classList.remove("hide"); if (mount) mount(); }
+function closeSheet(){ state.run++; $("sheet").classList.add("hide"); $("sheetBody").innerHTML = ""; }
 $("sheetBg").onclick = closeSheet; $("sheetX").onclick = closeSheet;
 addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
 
 /* ---------- Navigation ---------- */
-function showCatalog(){ $("ordersView").classList.add("hide"); $("catalog").classList.remove("hide"); }
-function goAll(cat){
-  showCatalog(); state.cat = cat || "Rehetra"; renderChips(); renderGrid();
-  $("all").scrollIntoView({ behavior: "smooth" });
-}
+function showCatalog(){ state.view = "catalog"; $("ordersView").classList.add("hide"); $("catalog").classList.remove("hide"); }
+function goAll(cat){ showCatalog(); state.cat = cat || ""; renderChips(); renderGrid(); $("all").scrollIntoView({ behavior: "smooth" }); }
 function goHome(){ showCatalog(); scrollTo({ top: 0, behavior: "smooth" }); }
 function renderNav(){
   const cats = [...new Set(state.books.map(b => (b.category || "").trim()).filter(Boolean))].slice(0, 4);
-  $("nav").innerHTML = `<a data-go="home">Akaikika</a><a data-go="all">Boky</a>${cats.map(c => `<a data-cat="${esc(c)}">${esc(c)}</a>`).join("")}<a data-go="orders">Baiko</a>`;
+  $("nav").innerHTML = `<a data-go="home">${esc(t("nav.home"))}</a><a data-go="all">${esc(t("nav.books"))}</a>${cats.map(c => `<a data-cat="${esc(c)}">${esc(c)}</a>`).join("")}<a data-go="orders">${esc(t("nav.orders"))}</a>`;
 }
 $("nav").onclick = e => {
   const a = e.target.closest("a"); if (!a) return; e.preventDefault();
@@ -143,7 +138,6 @@ document.querySelector("footer").onclick = e => {
 $("home").onclick = e => { e.preventDefault(); goHome(); };
 $("heroBrowse").onclick = () => goAll();
 $("heroAcct").onclick = () => state.user ? showOrders() : openAuth(null, "up");
-$("btnOrders").onclick = showOrders;
 
 /* ---------- Books ---------- */
 const hue = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
@@ -154,23 +148,22 @@ function coverEl(b){
 }
 const card = b => `<article class="book" data-id="${esc(b.id)}">${coverEl(b)}
   <div class="info"><h3>${esc(b.title)}</h3><div class="au">${esc(b.author || "")}</div>
-  <div class="bt"><span class="price">${money(b.price)}</span><button class="btn sm" data-buy="${esc(b.id)}">Hividy</button></div></div></article>`;
+  <div class="bt"><span class="price">${money(b.price)}</span><button class="btn sm" data-buy="${esc(b.id)}">${esc(t("buy"))}</button></div></div></article>`;
 
 function renderChips(){
-  const cats = ["Rehetra", ...new Set(state.books.map(b => (b.category || "").trim()).filter(Boolean))];
-  $("chips").innerHTML = cats.length > 1 ? cats.map(c => `<button class="chip ${c === state.cat ? "on" : ""}" data-c="${esc(c)}">${esc(c)}</button>`).join("") : "";
+  const cats = [...new Set(state.books.map(b => (b.category || "").trim()).filter(Boolean))];
+  $("chips").innerHTML = cats.length ? [""].concat(cats).map(c => `<button class="chip ${c === state.cat ? "on" : ""}" data-c="${esc(c)}">${esc(c || t("chip.all"))}</button>`).join("") : "";
 }
 function renderFeatured(){
-  const f = state.books.slice(0, 4);
   $("featured").classList.toggle("hide", state.books.length <= 4);
-  $("featGrid").innerHTML = f.map(card).join("");
+  $("featGrid").innerHTML = state.books.slice(0, 4).map(card).join("");
 }
 function renderGrid(){
   const q = state.q.trim().toLowerCase();
   const list = state.books.filter(b =>
-    (state.cat === "Rehetra" || (b.category || "").trim() === state.cat) &&
+    (!state.cat || (b.category || "").trim() === state.cat) &&
     (!q || (b.title || "").toLowerCase().includes(q) || (b.author || "").toLowerCase().includes(q)));
-  $("grid").innerHTML = list.length ? list.map(card).join("") : `<div class="empty" style="grid-column:1/-1">Tsy nahita boky.</div>`;
+  $("grid").innerHTML = list.length ? list.map(card).join("") : `<div class="empty" style="grid-column:1/-1">${esc(t("books.none"))}</div>`;
 }
 function onBookClick(e){
   const buy = e.target.closest("[data-buy]"), c = e.target.closest("[data-id]");
@@ -194,7 +187,7 @@ async function loadBooks(){
     store.set("kmt_books", JSON.stringify(state.books.map(b => ({ ...b, createdAt: b.createdAt ? { seconds: b.createdAt.seconds } : null }))));
     renderAll();
   } catch (e) {
-    if (!state.books.length) { renderNav(); $("grid").innerHTML = `<div class="empty" style="grid-column:1/-1">Tsy afaka naka ny boky. Hamarino ny internet.</div>`; }
+    if (!state.books.length) { renderNav(); $("grid").innerHTML = `<div class="empty" style="grid-column:1/-1">${esc(t("books.err"))}</div>`; }
   }
 }
 
@@ -202,7 +195,7 @@ function openDetail(b){
   openSheet(`<div class="detail">${coverEl(b)}<h2>${esc(b.title)}</h2>
     <p class="muted">${esc(b.author || "")}${b.category ? " · " + esc(b.category) : ""}</p>
     ${b.description ? `<p>${esc(b.description)}</p>` : ""}
-    <div class="row" style="margin-top:14px"><strong class="price" style="font-size:22px">${money(b.price)}</strong><div class="grow"></div><button class="btn" id="goBuy">Hividy</button></div></div>`,
+    <div class="row" style="margin-top:14px"><strong class="price" style="font-size:22px">${money(b.price)}</strong><div class="grow"></div><button class="btn" id="goBuy">${esc(t("buy"))}</button></div></div>`,
     () => $("goBuy").onclick = () => startBuy(b));
 }
 
@@ -211,16 +204,16 @@ function openAuth(after, startMode){
   state.after = after || null;
   let mode = startMode || "in";
   const render = () => openSheet(`
-    <h2>${mode === "in" ? "Midira" : "Hamorona kaonty"}</h2>
-    <p class="muted small">Ilaina ny kaonty mba hitahiry ny baikonao sy ny bokinao.</p>
-    <div class="tabs"><button data-m="in" class="${mode === "in" ? "on" : ""}">Midira</button><button data-m="up" class="${mode === "up" ? "on" : ""}">Kaonty vaovao</button></div>
-    <input id="aEmail" type="email" placeholder="Email" autocomplete="email">
-    <input id="aPass" type="password" placeholder="Teny miafina (6+ litera)" autocomplete="${mode === "in" ? "current-password" : "new-password"}">
-    <button class="btn block" id="aGo" style="margin-top:8px">${mode === "in" ? "Midira" : "Hamorona kaonty"}</button>
+    <h2>${esc(t(mode === "in" ? "auth.title.in" : "auth.title.up"))}</h2>
+    <p class="muted small">${esc(t("auth.sub"))}</p>
+    <div class="tabs"><button data-m="in" class="${mode === "in" ? "on" : ""}">${esc(t("auth.tab.in"))}</button><button data-m="up" class="${mode === "up" ? "on" : ""}">${esc(t("auth.tab.up"))}</button></div>
+    <input id="aEmail" type="email" placeholder="${esc(t("auth.email"))}" autocomplete="email">
+    <input id="aPass" type="password" placeholder="${esc(t("auth.pass"))}" autocomplete="${mode === "in" ? "current-password" : "new-password"}">
+    <button class="btn block" id="aGo" style="margin-top:8px">${esc(t(mode === "in" ? "auth.title.in" : "auth.title.up"))}</button>
     <p id="aErr" style="color:var(--bad);font-size:14px;margin-top:10px"></p>
-    ${mode === "in" ? `<button class="btn ghost sm" id="aForgot">Adino ny teny miafina?</button>` : ""}`,
+    ${mode === "in" ? `<button class="btn ghost sm" id="aForgot">${esc(t("auth.forgot"))}</button>` : ""}`,
     () => {
-      document.querySelectorAll("#sheetBody .tabs button").forEach(b => b.onclick = () => { mode = b.dataset.m; render(); });
+      document.querySelectorAll("#sheetBody .tabs button").forEach(b => b.onclick = () => { const a = state.after; mode = b.dataset.m; render(); state.after = a; });
       $("aGo").onclick = async () => {
         $("aErr").textContent = ""; $("aGo").disabled = true;
         try {
@@ -229,26 +222,28 @@ function openAuth(after, startMode){
         } catch (e) { $("aErr").textContent = errMsg(e); $("aGo").disabled = false; }
       };
       if ($("aForgot")) $("aForgot").onclick = async () => {
-        const em = $("aEmail").value.trim(); if (!em) { $("aErr").textContent = "Soraty aloha ny email."; return; }
-        try { await sendPasswordResetEmail(auth, em); toast("Alefa ao amin'ny email ny rohy fanovana."); } catch (e) { $("aErr").textContent = errMsg(e); }
+        const em = $("aEmail").value.trim(); if (!em) { $("aErr").textContent = t("auth.needemail"); return; }
+        try { await sendPasswordResetEmail(auth, em); toast(t("auth.resetsent")); } catch (e) { $("aErr").textContent = errMsg(e); }
       };
     });
-  render();
+  render(); state.after = after || null;
 }
 function openAccount(){
-  openSheet(`<h2>Kaontiko</h2><p class="muted">${esc(state.user.email)}</p>
-    <button class="btn block" id="myOrd">Ny kaomandy nataoko</button>
-    <button class="btn ghost block" id="out" style="margin-top:8px">Hiala</button>`,
-    () => { $("myOrd").onclick = () => { closeSheet(); showOrders(); }; $("out").onclick = async () => { await signOut(auth); closeSheet(); toast("Tafaboaka"); }; });
+  openSheet(`<h2>${esc(t("acct.title"))}</h2><p class="muted">${esc(state.user.email)}</p>
+    <button class="btn block" id="myOrd">${esc(t("acct.orders"))}</button>
+    <button class="btn ghost block" id="out" style="margin-top:8px">${esc(t("acct.out"))}</button>`,
+    () => { $("myOrd").onclick = () => { closeSheet(); showOrders(); }; $("out").onclick = async () => { await signOut(auth); closeSheet(); toast(t("toast.out")); }; });
 }
 $("btnAcct").onclick = () => state.user ? openAccount() : openAuth();
 
+function renderAuthUi(){
+  const u = state.user;
+  $("btnAcct").textContent = t(u ? "acct.me" : "acct.login");
+  $("btnAcct").classList.toggle("ghost", !!u);
+  $("heroAcct").textContent = t(u ? "hero.myorders" : "hero.signup");
+}
 onAuthStateChanged(auth, user => {
-  state.user = user;
-  $("btnAcct").textContent = user ? "Kaontiko" : "Midira";
-  $("btnAcct").classList.toggle("ghost", !!user);
-  $("btnOrders").classList.toggle("hide", !user);
-  $("heroAcct").textContent = user ? "Ny baikoko" : "Hamorona kaonty";
+  state.user = user; renderAuthUi();
   if (user) { closeSheet(); const fn = state.after; state.after = null; if (fn) fn(); }
   else showCatalog();
 });
@@ -256,40 +251,97 @@ onAuthStateChanged(auth, user => {
 /* ---------- Buy ---------- */
 function startBuy(b){
   if (!state.user) { openAuth(() => startBuy(b)); return; }
-  openSheet(`<h2>Hividy: ${esc(b.title)}</h2>
+  AUTO ? startBuyAuto(b) : startBuyManual(b);
+}
+
+function startBuyManual(b){
+  openSheet(`<h2>${esc(t("buy.title", { t: b.title }))}</h2>
     <ol class="steps">
-      <li><b>Alefaso ny ${money(b.price)} amin'ny MVola</b>
-        <div class="numbox"><span>${esc(MVOLA_NUMBER)}</span><button class="btn ghost sm" id="cp">Kopia</button></div></li>
-      <li><b>Fenoy ny momba ny fandoavana</b>
-        <input id="bPhone" type="tel" inputmode="tel" placeholder="Laharana MVola nandefa">
-        <input id="bRef" placeholder="Référence transaction (ao amin'ny SMS MVola)"></li>
-      <li><b>Alefaso ny baiko</b></li>
+      <li><b>${esc(t("buy.m.s1", { p: money(b.price) }))}</b>
+        <div class="numbox"><span>${esc(MVOLA_NUMBER)}</span><button class="btn ghost sm" id="cp">${esc(t("buy.copy"))}</button></div></li>
+      <li><b>${esc(t("buy.m.s2"))}</b>
+        <input id="bPhone" type="tel" inputmode="tel" placeholder="${esc(t("buy.m.phone"))}">
+        <input id="bRef" placeholder="${esc(t("buy.m.ref"))}"></li>
+      <li><b>${esc(t("buy.m.s3"))}</b></li>
     </ol>
-    <button class="btn block" id="bSend">Alefa ny baiko</button>
-    <p class="muted small" style="margin-top:10px">Hojerena ny SMS MVola. Rehefa voamarina dia hiseho ao amin'ny « Baiko » ny rohy hanaovana ny boky.</p>`,
+    <button class="btn block" id="bSend">${esc(t("buy.m.send"))}</button>
+    <p class="muted small" style="margin-top:10px">${esc(t("buy.m.note"))}</p>`,
     () => {
-      $("cp").onclick = async () => { try { await navigator.clipboard.writeText(MVOLA_NUMBER.replace(/\s/g, "")); toast("Voakopia ny laharana"); } catch { toast("Tsy afaka kopiena: soraty tanana"); } };
+      $("cp").onclick = async () => { try { await navigator.clipboard.writeText(MVOLA_NUMBER.replace(/\s/g, "")); toast(t("toast.copied")); } catch { toast(t("toast.copyfail")); } };
       $("bSend").onclick = async () => {
         const phone = $("bPhone").value.trim(), ref = $("bRef").value.trim();
-        if (phone.replace(/\D/g, "").length < 9) return toast("Soraty tsara ny laharana MVola.");
-        if (ref.length < 5) return toast("Soraty ny référence transaction.");
+        if (phone.replace(/\D/g, "").length < 9) return toast(t("buy.m.badphone"));
+        if (ref.length < 5) return toast(t("buy.m.badref"));
         $("bSend").disabled = true;
         try {
           await addDoc(collection(db, "orders"), {
             uid: state.user.uid, email: state.user.email, bookId: b.id, bookTitle: b.title,
             amount: Number(b.price), phone, mvolaRef: ref, status: "pending", createdAt: serverTimestamp()
           });
-          closeSheet(); toast("Voaray ny baikonao ✅"); showOrders();
+          closeSheet(); toast(t("toast.orderok")); showOrders();
         } catch (e) { toast(errMsg(e)); $("bSend").disabled = false; }
       };
     });
 }
 
+async function api(path, body){
+  let token; try { token = await state.user.getIdToken(); } catch { throw Object.assign(new Error("network"), { code: "network" }); }
+  let r;
+  try { r = await fetch(WORKER_URL.replace(/\/$/, "") + path, { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + token }, body: JSON.stringify(body) }); }
+  catch { throw Object.assign(new Error("network"), { code: "network" }); }
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw Object.assign(new Error(j.error || "http_" + r.status), { code: j.error || "http_" + r.status });
+  return j;
+}
+
+function startBuyAuto(b){
+  openSheet(`<h2>${esc(t("buy.title", { t: b.title }))}</h2>
+    <div id="autoBox">
+      <ol class="steps">
+        <li><b>${esc(t("buy.a.s1"))}</b>
+          <input id="aPhone" type="tel" inputmode="tel" placeholder="${esc(t("buy.a.phone"))}" autocomplete="tel"></li>
+        <li><b>${esc(t("buy.a.s2"))}</b></li>
+        <li>${esc(t("buy.a.s3"))}</li>
+      </ol>
+      <div id="aMsg"></div>
+      <button class="btn block" id="aPay">${esc(t("buy.a.pay", { p: money(b.price) }))}</button>
+      <button class="btn ghost sm" id="aManual" style="margin-top:10px">${esc(t("buy.a.manual"))}</button>
+    </div>`,
+    () => {
+      $("aManual").onclick = () => startBuyManual(b);
+      $("aPay").onclick = async () => {
+        let ph = $("aPhone").value.replace(/[^\d+]/g, "");
+        if (ph.startsWith("+261")) ph = "0" + ph.slice(4); else if (ph.startsWith("261")) ph = "0" + ph.slice(3);
+        if (!/^03[48]\d{7}$/.test(ph)) { $("aMsg").innerHTML = `<div class="alert bad">${esc(t("err.invalid_phone"))}</div>`; return; }
+        $("aPay").disabled = true; $("aMsg").innerHTML = "";
+        const run = state.run;
+        try {
+          const { orderId } = await api("/pay", { bookId: b.id, phone: ph, lang: getLang() });
+          if (state.run !== run) return;
+          $("autoBox").innerHTML = `<div class="wait"><div class="spin"></div><b>${esc(t("buy.a.wait"))}</b><p class="muted small" style="margin-top:8px">${esc(t("buy.a.waitsub"))}</p></div>`;
+          for (let i = 0; i < 45; i++) {
+            await sleep(4000);
+            if (state.run !== run) return;
+            let r; try { r = await api("/check", { orderId }); } catch { continue; }
+            if (r.status === "paid") { closeSheet(); toast(t("buy.a.ok")); showOrders(); return; }
+            if (r.status === "rejected") {
+              $("autoBox").innerHTML = `<div class="alert bad">${esc(t("buy.a.fail"))}</div><button class="btn block" id="retry">${esc(t("buy.a.retry"))}</button>`;
+              $("retry").onclick = () => startBuyAuto(b); return;
+            }
+          }
+          closeSheet(); toast(t("buy.a.timeout")); showOrders();
+        } catch (e) {
+          if (state.run !== run) return;
+          $("aMsg").innerHTML = `<div class="alert bad">${esc(errMsg(e))}</div>`; $("aPay").disabled = false;
+        }
+      };
+    });
+}
+
 /* ---------- Orders ---------- */
-const LBL = { pending: "Miandry fanamarinana", paid: "Voamarina", rejected: "Nolavina" };
 function showOrders(){
   if (!state.user) return openAuth(showOrders);
-  $("catalog").classList.add("hide"); $("ordersView").classList.remove("hide"); scrollTo(0, 0); loadOrders();
+  state.view = "orders"; $("catalog").classList.add("hide"); $("ordersView").classList.remove("hide"); scrollTo(0, 0); loadOrders();
 }
 $("refresh").onclick = () => loadOrders();
 async function loadOrders(){
@@ -297,17 +349,21 @@ async function loadOrders(){
   try {
     const snap = await getDocs(query(collection(db, "orders"), where("uid", "==", state.user.uid)));
     const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    if (AUTO) await Promise.all(list.filter(o => o.status === "pending" && o.method === "mvola-auto" && o.serverCorrelationId).map(async o => {
+      try { const r = await api("/check", { orderId: o.id }); if (r.status) o.status = r.status; } catch {}
+    }));
     await Promise.all(list.map(async o => {
       if (o.status !== "paid") return;
       try { const s = await getDoc(doc(db, "deliveries", o.id)); if (s.exists()) o.pdfUrl = s.data().pdfUrl; } catch {}
     }));
-    box.innerHTML = list.length ? list.map(o => {
-      const u = safeUrl(o.pdfUrl), dt = o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleDateString("fr-FR") : "";
-      return `<div class="card ord"><div class="t"><div><b>${esc(o.bookTitle)}</b><div class="muted small">${money(o.amount)} · ${dt}</div></div><span class="tag ${esc(o.status)}">${LBL[o.status] || esc(o.status)}</span></div>
-        ${o.status === "paid" && u ? `<a class="btn block" style="margin-top:12px" href="${esc(u)}" target="_blank" rel="noopener">⬇ Sokafy / alaina ny PDF</a>` : ""}
-        ${o.status === "pending" ? `<p class="muted small" style="margin:10px 0 0">Miandry ny fanamarinana ny fandoavana. Avereno jerena afaka fotoana fohy.</p>` : ""}
-        ${o.status === "rejected" ? `<p class="muted small" style="margin:10px 0 0">Tsy hita ny fandoavana. Hamarino ny référence dia manaova kaomandy vaovao.</p>` : ""}</div>`;
-    }).join("") : `<div class="empty">Tsy mbola misy kaomandy.</div>`;
+    const dtf = new Intl.DateTimeFormat("fr-FR");
+    box.innerHTML = list.length ? `<div class="cards">` + list.map(o => {
+      const u = safeUrl(o.pdfUrl), dt = o.createdAt ? dtf.format(new Date(o.createdAt.seconds * 1000)) : "";
+      return `<div class="card ord"><div class="t"><div><b>${esc(o.bookTitle)}</b><div class="muted small">${money(o.amount)} · ${dt}</div></div><span class="tag ${esc(o.status)}">${esc(t("ord." + o.status))}</span></div>
+        ${o.status === "paid" && u ? `<a class="btn block" style="margin-top:12px" href="${esc(u)}" target="_blank" rel="noopener">${esc(t("ord.dl"))}</a>` : ""}
+        ${o.status === "pending" ? `<p class="muted small" style="margin:10px 0 0">${esc(t("ord.n.pending"))}</p>` : ""}
+        ${o.status === "rejected" ? `<p class="muted small" style="margin:10px 0 0">${esc(t("ord.n.rejected"))}</p>` : ""}</div>`;
+    }).join("") + `</div>` : `<div class="empty">${esc(t("ord.none"))}</div>`;
   } catch (e) { box.innerHTML = `<div class="empty">${esc(errMsg(e))}</div>`; }
 }
 
@@ -328,7 +384,6 @@ $("pwaBtn").onclick = async () => { if (!deferred) return; deferred.prompt(); aw
 $("bannerX").onclick = () => { store.set("kmt_banner", "x"); $("banner").classList.add("hide"); };
 showBanner();
 
-
 /* ---------- Splash ---------- */
 (() => {
   const sp = $("splash"); if (!sp) return;
@@ -337,6 +392,15 @@ showBanner();
   setTimeout(() => { sp.classList.add("out"); setTimeout(() => sp.remove(), 500); }, 1500);
 })();
 
+/* ---------- Langue ---------- */
+function onLang(){
+  $("payNote").textContent = t(AUTO ? "foot.paynote.auto" : "foot.paynote.manual");
+  renderAll(); renderAuthUi();
+  if (state.view === "orders" && state.user) loadOrders();
+}
+initLang(onLang);
+$("payNote").textContent = t(AUTO ? "foot.paynote.auto" : "foot.paynote.manual");
+renderAuthUi();
 renderNav();
 loadBooks();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
