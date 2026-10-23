@@ -142,66 +142,94 @@ footer .copy{margin-top:22px;padding-top:14px;border-top:1px solid #2c2418;font-
 .top .lang-switch{margin-right:2px}
 
 /* ---------- responsive (léger) ---------- */
-@supports(padding:max(0px)){
-  .top .row,.nav .wrap,.wrap,.sheet .panel{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
-  .top{padding-top:env(safe-area-inset-top)}
-  #toast{bottom:max(24px,env(safe-area-inset-bottom))}
-  .sheet .panel{padding-bottom:max(26px,env(safe-area-inset-bottom))}
-}
 img,svg{max-width:100%;height:auto}
-.btn,.chip,input,textarea,.lang-switch button{touch-action:manipulation}
+.btn,.chip,input,textarea,.lang-switch button,.nav a{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 
+@supports(padding:max(0px)){
+  .top .row,.nav .wrap,.wrap,.sheet .panel{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+  .top{padding-top:env(safe-area-inset-top)}
+  #toast{bottom:max(20px,env(safe-area-inset-bottom))}
+  .sheet .panel{padding-bottom:max(24px,env(safe-area-inset-bottom))}
+  footer{padding-bottom:max(26px,env(safe-area-inset-bottom))}
+}
+
+/* tablette */
+@media(min-width:641px) and (max-width:960px){
+  .grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:18px 14px}
+  .hero2{padding:36px 0 32px}
+}
+
+/* téléphone */
 @media(max-width:640px){
   .wrap{padding-left:14px;padding-right:14px}
   .top .row{height:52px;gap:6px}
-  .brand{font-size:18px;gap:7px;letter-spacing:0}
-  .brand svg,.logo{width:26px;height:26px}
-  .top .btn.sm{padding:7px 10px;font-size:13px}
-  .lang-switch button{padding:6px 8px;min-width:32px;font-size:11px}
-  .nav a{padding:10px 10px;font-size:12px;letter-spacing:.4px}
-  .hero2{padding:28px 0 28px}
-  .hero2 h1{font-size:clamp(24px,7vw,36px);letter-spacing:.3px}
-  .hero2 p{font-size:15px}
+  .brand{font-size:clamp(15px,4.5vw,18px);gap:6px;letter-spacing:0;min-width:0}
+  .brand span:not(.logo){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .brand svg,.logo{width:26px;height:26px;flex:none}
+  .top .btn.sm{padding:7px 10px;font-size:13px;white-space:nowrap}
+  .lang-switch button{padding:6px 8px;min-width:30px;font-size:11px}
+  .nav a{padding:10px 11px;font-size:12px;letter-spacing:.3px}
+  .hero2{padding:26px 0 24px}
+  .hero2 h1{font-size:clamp(22px,6.5vw,34px);letter-spacing:.2px;line-height:1.15}
+  .hero2 p{font-size:15px;line-height:1.5}
   .hero2 .cta{gap:8px;margin:14px 0 6px}
-  .hero2 .cta .btn{flex:1 1 auto;min-width:0;padding:11px 14px;font-size:14px}
-  .search{margin-top:12px}
+  .hero2 .cta .btn{flex:1 1 calc(50% - 8px);min-width:0;padding:11px 12px;font-size:14px}
+  .search{margin-top:12px;max-width:100%}
+  .search input{font-size:16px} /* évite zoom iOS */
   .banner{flex-wrap:wrap;gap:10px;padding:12px}
-  .banner .grow{flex:1 1 140px}
-  .sec{padding:24px 0 4px}
-  .sec-title{font-size:clamp(18px,5vw,24px);margin-bottom:16px;letter-spacing:1px}
-  .grid{gap:16px 12px;padding:2px 0 22px;grid-template-columns:repeat(2,1fr)}
+  .banner .grow{flex:1 1 120px;min-width:0}
+  .sec{padding:22px 0 4px}
+  .sec-title{font-size:clamp(18px,5vw,24px);margin-bottom:14px;letter-spacing:1px}
+  .chips{padding-bottom:12px;gap:6px}
+  .chip{padding:7px 12px;font-size:13px}
+  .grid{gap:14px 10px;padding:2px 0 20px;grid-template-columns:repeat(2,minmax(0,1fr))}
   .book h3{font-size:15px}
   .book .au{font-size:12px}
-  .book .bt{flex-wrap:wrap;gap:6px}
+  .book .bt{flex-direction:column;align-items:stretch;gap:8px;padding-top:6px}
+  .book .bt .price{font-size:14px}
   .book .bt .btn{width:100%}
-  .detail .cover{max-width:150px}
+  .cover{border-radius:4px 8px 8px 4px}
+  .detail .cover{max-width:140px}
   .detail h2{font-size:22px}
-  .sheet .panel{padding:18px 14px 22px;max-height:94vh;border-radius:16px 16px 0 0}
+  .sheet .panel{padding:16px 14px 20px;max-height:92vh;border-radius:16px 16px 0 0}
   .sheet .close{width:36px;height:36px;right:10px;top:10px}
-  .numbox{font-size:17px;padding:10px;flex-wrap:wrap}
-  .tabs button{font-size:13px;padding:9px 4px}
-  footer{padding:24px 0 20px;margin-top:20px}
-  footer .cols{gap:18px}
-  #ordersView .row{padding:18px 0 10px!important;flex-wrap:wrap;gap:8px}
+  .numbox{font-size:16px;padding:10px;flex-wrap:wrap;gap:8px}
+  .tabs{margin:4px 0 12px}
+  .tabs button{font-size:13px;padding:10px 4px}
+  .steps{padding-left:18px}
+  .steps li{margin-bottom:10px}
+  footer{padding:22px 0 18px;margin-top:18px;font-size:13px}
+  footer .cols{grid-template-columns:1fr;gap:16px}
+  footer h4{font-size:16px}
+  #ordersView .row{padding:16px 0 10px!important;flex-wrap:wrap;gap:8px}
   #ordersView h2{font-size:22px!important}
-  .ord .t{flex-wrap:wrap}
-  .card.row{flex-wrap:wrap}
+  .ord .t{flex-wrap:wrap;gap:6px}
+  .card{padding:14px}
+  .card.row{flex-wrap:wrap;gap:8px}
   .card.row .btn{flex:none}
+  input,textarea,select{font-size:16px;padding:11px 12px} /* évite zoom iOS */
+  #splash h1{letter-spacing:4px}
+  #splash p{letter-spacing:3px}
 }
+
+/* très petit écran */
 @media(max-width:380px){
-  .brand{font-size:16px}
+  .top .row{gap:4px}
+  .brand{font-size:14px}
   .top .btn.sm{padding:6px 8px;font-size:12px}
-  .grid{gap:12px 10px}
-  .book h3{font-size:14px}
-  .hero2 .cta .btn{width:100%}
+  .lang-switch button{padding:5px 6px;min-width:28px}
+  .hero2 .cta .btn{flex:1 1 100%}
+  .grid{gap:12px 8px}
+  .book h3{font-size:13px}
+  .book .bt .btn{padding:8px 10px;font-size:13px}
 }
-@media(min-width:641px) and (max-width:900px){
-  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
-}
+
+/* tactile : pas d'effet hover fantôme */
 @media(hover:none){
   .book:hover .cover{transform:none}
   .btn:hover{background:var(--pri)}
   .btn.ghost:hover{background:transparent}
   .top .btn.ghost:hover{background:transparent}
+  .chip:hover{/* no-op */}
 }
