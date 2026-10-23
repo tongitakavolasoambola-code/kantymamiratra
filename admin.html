@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title data-i="a.title">Admin · Kantymamiratra</title>
+<title>Admin · Kantymamiratra</title>
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#14110d">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" href="icon-192.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,43 +14,44 @@
   <div class="wrap row">
     <a class="brand" href="./admin.html"><span class="logo">🔐</span>Admin</a>
     <div class="grow"></div>
-    <div class="lang" role="group" aria-label="Langue / Fiteny"><button data-l="mg">MG</button><button data-l="fr">FR</button></div>
-    <a class="btn ghost sm" href="./" data-i="a.site"></a>
-    <button class="btn ghost sm hide" id="out" data-i="a.out"></button>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button type="button" data-l="mg" class="on">MG</button>
+      <button type="button" data-l="fr">FR</button>
+    </div>
+    <a class="btn ghost sm" href="./" data-i="a.site">Site</a>
+    <button class="btn ghost sm hide" id="out" data-i="a.out">Hiala</button>
   </div>
 </header>
 
 <main class="wrap" style="padding-top:18px;padding-bottom:40px">
   <div id="auth" class="card" style="max-width:420px;margin:20px auto">
-    <h2 data-i="a.login.title"></h2>
-    <input id="email" type="email" data-ip="a.email" autocomplete="email">
-    <input id="pass" type="password" data-ip="a.pass" autocomplete="current-password">
-    <button class="btn block" id="login" style="margin-top:8px" data-i="a.login"></button>
+    <h2 data-i="a.login.title">Fidirana Admin</h2>
+    <input id="email" type="email" data-ip="a.email" placeholder="Email Admin" autocomplete="email">
+    <input id="pass" type="password" data-ip="a.pass" placeholder="Teny miafina" autocomplete="current-password">
+    <button class="btn block" id="login" style="margin-top:8px" data-i="a.login">Miditra</button>
     <p id="msg" style="color:var(--bad);font-size:14px"></p>
   </div>
 
   <div id="panel" class="hide">
-    <div class="tabs" id="tabs" style="max-width:520px">
-      <button data-t="pending" class="on"><span data-i="a.tab.orders"></span> <span id="cnt"></span></button>
-      <button data-t="books" data-i="a.tab.books"></button>
-      <button data-t="history" data-i="a.tab.hist"></button>
+    <div class="tabs" id="tabs">
+      <button data-t="pending" class="on"><span data-i="a.tab.orders">kaomandy</span> <span id="cnt"></span></button>
+      <button data-t="books" data-i="a.tab.books">Boky</button>
+      <button data-t="history" data-i="a.tab.hist">Tantara</button>
     </div>
 
     <section id="tPending"></section>
 
     <section id="tBooks" class="hide">
       <div class="card">
-        <h3 id="formTitle" data-i="a.form.add"></h3>
-        <div class="two">
-          <div><label data-i="a.f.title"></label><input id="fTitle"></div>
-          <div><label data-i="a.f.author"></label><input id="fAuthor"></div>
-          <div><label data-i="a.f.cat"></label><input id="fCat" data-ip="a.f.cat.ph"></div>
-          <div><label data-i="a.f.price"></label><input id="fPrice" type="number" inputmode="numeric" placeholder="5000"></div>
-        </div>
-        <label data-i="a.f.cover"></label><input id="fCover" placeholder="https://…">
-        <label data-i="a.f.desc"></label><textarea id="fDesc" data-ip="a.f.desc.ph"></textarea>
-        <label data-i="a.f.pdf"></label><input id="fPdf" placeholder="https://…">
-        <div class="row" style="margin-top:8px"><button class="btn grow" id="fSave" data-i="a.save"></button><button class="btn ghost hide" id="fCancel" data-i="a.cancel"></button></div>
+        <h3 id="formTitle" data-i="a.form.add">Hanampy boky</h3>
+        <label data-i="a.f.title">Lohateny</label><input id="fTitle" data-ip="a.f.title" placeholder="Lohateny">
+        <label data-i="a.f.author">Mpanoratra</label><input id="fAuthor" data-ip="a.f.author" placeholder="Mpanoratra">
+        <label data-i="a.f.cat">Sokajy</label><input id="fCat" data-ip="a.f.cat.ph" placeholder="oh. Hira, Fiainana, Fianarana">
+        <label data-i="a.f.price">Vidiny (Ar)</label><input id="fPrice" type="number" inputmode="numeric" placeholder="5000">
+        <label data-i="a.f.cover">Rohy sary fonosana (https://…)</label><input id="fCover" placeholder="https://…">
+        <label data-i="a.f.desc">Fanazavana fohy</label><textarea id="fDesc" data-ip="a.f.desc.ph" placeholder="Momba ny boky"></textarea>
+        <label data-i="a.f.pdf">Rohy PDF (tsy ampahibemaso: Drive/R2)</label><input id="fPdf" placeholder="https://…">
+        <div class="row" style="margin-top:8px"><button class="btn grow" id="fSave" data-i="a.save">Tehirizo</button><button class="btn ghost hide" id="fCancel" data-i="a.cancel">Foano</button></div>
       </div>
       <div id="bookList"></div>
     </section>
@@ -63,7 +64,7 @@
 
 <script type="module">
 import { firebaseConfig } from "./firebase-config.js";
-import { t, initLang } from "./i18n.js";
+import { getLang, t, applyStatic, initLang } from "./i18n.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, collection, getDocs, addDoc, setDoc, updateDoc, deleteDoc, getDoc, doc, serverTimestamp }
@@ -76,11 +77,27 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 const safeUrl = u => /^https:\/\//i.test(String(u || "").trim()) ? String(u).trim() : "";
 const money = n => Number(n || 0).toLocaleString("fr-FR") + " Ar";
 const fmt = o => o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }) : "";
-function toast(msg){ const d = document.createElement("div"); d.textContent = msg; $("toast").appendChild(d); setTimeout(() => d.remove(), 3400); }
+function toast(msg){ const d = document.createElement("div"); d.textContent = msg; $("toast").appendChild(d); setTimeout(() => d.remove(), 3200); }
 
-let orders = [], books = [], editId = null, loggedIn = false;
+let orders = [], books = [], editId = null;
 
-/* ---------- Auth ---------- */
+function syncUI() {
+  document.title = t("a.title");
+  applyStatic();
+  if (editId) {
+    $("formTitle").textContent = t("a.form.edit");
+    $("fSave").textContent = t("a.saveedit");
+  } else {
+    $("formTitle").textContent = t("a.form.add");
+    $("fSave").textContent = t("a.save");
+  }
+  if (!$("panel").classList.contains("hide")) {
+    renderPending(); renderHistory(); renderBooks();
+  }
+}
+initLang(syncUI);
+syncUI();
+
 $("login").onclick = () => {
   $("msg").textContent = "";
   signInWithEmailAndPassword(auth, $("email").value.trim(), $("pass").value).catch(() => $("msg").textContent = t("a.badlogin"));
@@ -88,16 +105,14 @@ $("login").onclick = () => {
 $("out").onclick = () => signOut(auth);
 
 onAuthStateChanged(auth, async user => {
-  if (!user) { loggedIn = false; $("auth").classList.remove("hide"); $("panel").classList.add("hide"); $("out").classList.add("hide"); return; }
+  if (!user) { $("auth").classList.remove("hide"); $("panel").classList.add("hide"); $("out").classList.add("hide"); return; }
   let ok = false;
   try { ok = (await getDoc(doc(db, "admins", user.uid))).exists(); } catch {}
   if (!ok) { $("msg").textContent = t("a.notadmin"); await signOut(auth); return; }
-  loggedIn = true;
   $("auth").classList.add("hide"); $("panel").classList.remove("hide"); $("out").classList.remove("hide");
   await refreshAll();
 });
 
-/* ---------- Tabs ---------- */
 $("tabs").onclick = e => {
   const b = e.target.closest("button"); if (!b) return;
   document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
@@ -110,23 +125,21 @@ async function refreshAll(){
   const [o, b] = await Promise.all([getDocs(collection(db, "orders")), getDocs(collection(db, "books"))]);
   orders = o.docs.map(d => ({ id: d.id, ...d.data() })).sort((x, y) => (y.createdAt?.seconds || 0) - (x.createdAt?.seconds || 0));
   books = b.docs.map(d => ({ id: d.id, ...d.data() })).sort((x, y) => (y.createdAt?.seconds || 0) - (x.createdAt?.seconds || 0));
-  renderAll();
+  renderPending(); renderHistory(); renderBooks();
 }
-function renderAll(){ renderPending(); renderHistory(); renderBooks(); }
 
-/* ---------- Orders ---------- */
 function renderPending(){
   const list = orders.filter(o => o.status === "pending");
   $("cnt").textContent = list.length ? `(${list.length})` : "";
-  const refs = {}; orders.forEach(o => { const k = String(o.mvolaRef || "").trim().toLowerCase(); if (k) refs[k] = (refs[k] || 0) + 1; });
-  $("tPending").innerHTML = list.length ? `<div class="cards">` + list.map(o => {
-    const k = String(o.mvolaRef || "").trim().toLowerCase(), dup = k && refs[k] > 1;
+  const refs = {}; orders.forEach(o => { const k = String(o.mvolaRef || "").trim().toLowerCase(); refs[k] = (refs[k] || 0) + 1; });
+  $("tPending").innerHTML = list.length ? list.map(o => {
+    const dup = refs[String(o.mvolaRef || "").trim().toLowerCase()] > 1;
     return `<div class="card ord" data-id="${esc(o.id)}">
-      <div class="t"><div><b>${esc(o.bookTitle)}</b>${o.method === "mvola-auto" ? `<span class="tag auto">${esc(t("a.auto"))}</span>` : ""}<div class="muted small">${fmt(o)}</div></div><b class="price">${money(o.amount)}</b></div>
-      <p style="margin:10px 0 4px" class="small">${esc(o.email)}<br>${esc(t("a.tel"))}: <b>${esc(o.phone)}</b>${o.mvolaRef ? `<br>${esc(t("a.ref"))}: <b>${esc(o.mvolaRef)}</b>` : ""}</p>
+      <div class="t"><div><b>${esc(o.bookTitle)}</b><div class="muted small">${fmt(o)}</div></div><b class="price">${money(o.amount)}</b></div>
+      <p style="margin:10px 0 4px" class="small">${esc(o.email)}<br>${esc(t("a.tel"))}: <b>${esc(o.phone)}</b><br>${esc(t("a.ref"))}: <b>${esc(o.mvolaRef)}</b></p>
       ${dup ? `<div class="dup">${esc(t("a.dup"))}</div>` : ""}
       <div class="row" style="margin-top:10px"><button class="btn ok grow" data-act="ok">${esc(t("a.valid"))}</button><button class="btn bad grow" data-act="no">${esc(t("a.reject"))}</button></div></div>`;
-  }).join("") + `</div>` : `<div class="empty">${esc(t("a.none.pending"))}</div>`;
+  }).join("") : `<div class="empty">${esc(t("a.none.pending"))}</div>`;
 }
 $("tPending").onclick = async e => {
   const btn = e.target.closest("[data-act]"); if (!btn) return;
@@ -149,22 +162,19 @@ $("tPending").onclick = async e => {
 };
 function renderHistory(){
   const list = orders.filter(o => o.status !== "pending");
-  $("tHistory").innerHTML = list.length ? `<div class="cards">` + list.map(o => `<div class="card ord">
-    <div class="t"><div><b>${esc(o.bookTitle)}</b><div class="muted small">${fmt(o)} · ${esc(o.email)}</div><div class="muted small">${o.mvolaRef ? esc(t("a.ref")) + ": " + esc(o.mvolaRef) + " · " : ""}${esc(o.phone)}</div></div>
-    <div style="text-align:right"><span class="tag ${esc(o.status)}">${esc(t(o.status === "paid" ? "a.st.paid" : "a.st.rej"))}</span><div class="price small" style="margin-top:4px">${money(o.amount)}</div></div></div></div>`).join("") + `</div>` : `<div class="empty">${esc(t("a.none.hist"))}</div>`;
+  $("tHistory").innerHTML = list.length ? list.map(o => `<div class="card ord">
+    <div class="t"><div><b>${esc(o.bookTitle)}</b><div class="muted small">${fmt(o)} · ${esc(o.email)}</div><div class="muted small">${esc(t("a.ref"))}: ${esc(o.mvolaRef)} · ${esc(o.phone)}</div></div>
+    <div style="text-align:right"><span class="tag ${esc(o.status)}">${o.status === "paid" ? esc(t("a.st.paid")) : esc(t("a.st.rej"))}</span><div class="price small" style="margin-top:4px">${money(o.amount)}</div></div></div></div>`).join("") : `<div class="empty">${esc(t("a.none.hist"))}</div>`;
 }
 
-/* ---------- Books ---------- */
 function renderBooks(){
-  $("formTitle").textContent = t(editId ? "a.form.edit" : "a.form.add");
-  $("fSave").textContent = t(editId ? "a.saveedit" : "a.save");
-  $("bookList").innerHTML = books.length ? `<div class="cards">` + books.map(b => `<div class="card row" data-id="${esc(b.id)}">
+  $("bookList").innerHTML = books.length ? books.map(b => `<div class="card row" data-id="${esc(b.id)}">
     <div class="grow"><b>${esc(b.title)}</b><div class="muted small">${esc(b.author || "")} ${b.category ? "· " + esc(b.category) : ""}</div><div class="price">${money(b.price)}</div></div>
-    <button class="btn ghost sm" data-act="edit">${esc(t("a.edit"))}</button><button class="btn bad sm" data-act="del">${esc(t("a.del"))}</button></div>`).join("") + `</div>` : `<div class="empty">${esc(t("a.none.books"))}</div>`;
+    <button class="btn ghost sm" data-act="edit">${esc(t("a.edit"))}</button><button class="btn bad sm" data-act="del">${esc(t("a.del"))}</button></div>`).join("") : `<div class="empty">${esc(t("a.none.books"))}</div>`;
 }
 function resetForm(){
   editId = null; ["fTitle","fAuthor","fCat","fPrice","fCover","fDesc","fPdf"].forEach(i => $(i).value = "");
-  $("fCancel").classList.add("hide"); renderBooks();
+  $("formTitle").textContent = t("a.form.add"); $("fCancel").classList.add("hide"); $("fSave").textContent = t("a.save");
 }
 $("fCancel").onclick = resetForm;
 $("fSave").onclick = async () => {
@@ -189,15 +199,13 @@ $("bookList").onclick = async e => {
     editId = id; $("fTitle").value = b.title || ""; $("fAuthor").value = b.author || ""; $("fCat").value = b.category || "";
     $("fPrice").value = b.price || ""; $("fCover").value = b.cover || ""; $("fDesc").value = b.description || "";
     try { const f = await getDoc(doc(db, "bookFiles", id)); $("fPdf").value = f.exists() ? f.data().pdfUrl : ""; } catch {}
-    $("fCancel").classList.remove("hide"); renderBooks();
+    $("formTitle").textContent = t("a.form.edit"); $("fCancel").classList.remove("hide"); $("fSave").textContent = t("a.saveedit");
     scrollTo({ top: 0, behavior: "smooth" });
   } else if (confirm(t("a.confirm.del", { t: b.title }))) {
     try { await deleteDoc(doc(db, "books", id)); await deleteDoc(doc(db, "bookFiles", id)); toast(t("a.toast.deleted")); await refreshAll(); }
     catch (err) { toast(t("a.err", { c: err.code || err.message })); }
   }
 };
-
-initLang(() => { if (loggedIn) renderAll(); });
 </script>
 </body>
 </html>
