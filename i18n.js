@@ -6,7 +6,7 @@ mg: {
   "nav.home": "Fandraisana", "nav.books": "Boky", "nav.orders": "Baiko",
   "acct.login": "Miditra", "acct.me": "Kaontiko",
   "hero.h1": "Ny boky iray, fiainana vaovao iray.",
-  "hero.p": "Mividy fiainana vaovao sady mamboly fahombiazana raha vao mividy boky ianao iray ianao","Aloa amin'ny Mvola ka rehefa voamarina ny fandoavanao dia hiseho ao amin'ny kaontinao ny boky PDF.",
+  "hero.p": "Mividy fiainana vaovao sady mamboly fahombiazana raha vao mividy boky iray ianao","Aloa amin'ny Mvola ka rehefa voamarina ny fandoavanao dia hiseho ao amin'ny kaontinao ny boky PDF.",
   "hero.browse": "Jereo ny boky", "hero.signup": "Hamorona kaonty", "hero.myorders": "Kaomandiko",
   "search.ph": "Hitady boky na mpanoratra…",
   "banner.title": "Alao ny application", "banner.sub": "Haingana kokoa ary mora tadiavina", "banner.install": "Apetaho",
