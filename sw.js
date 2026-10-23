@@ -1,5 +1,5 @@
-const C = "kmt-v4";
-const SHELL = ["./", "./index.html", "./style.css", "./firebase-config.js", "./manifest.json", "./icon-192.png", "./icon-512.png"];
+const C = "kmt-v5";
+const SHELL = ["./", "./index.html", "./style.css", "./i18n.js", "./firebase-config.js", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(C).then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => {})))).then(() => self.skipWaiting()));
