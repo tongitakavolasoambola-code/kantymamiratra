@@ -215,12 +215,43 @@ async function loadBooks(){
   }
 }
 
+function bookShareUrl(){
+  try {
+    const u = new URL(location.href);
+    u.hash = ""; u.search = "";
+    let path = u.pathname.replace(/admin\.html$/i, "").replace(/index\.html$/i, "");
+    if (!path.endsWith("/")) path += "/";
+    u.pathname = path;
+    return u.toString();
+  } catch { return location.origin + "/"; }
+}
+async function shareBook(b){
+  const url = bookShareUrl();
+  const text = (b.title || "") + (b.author ? " — " + b.author : "") + " · " + money(b.price);
+  if (navigator.share) {
+    try { await navigator.share({ title: b.title || "Kantymamiratra", text, url }); return; } catch (e) { if (e && e.name === "AbortError") return; }
+  }
+  const fb = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
+  const w = window.open(fb, "_blank", "noopener,noreferrer,width=640,height=560");
+  if (!w) {
+    try { await navigator.clipboard.writeText(url); toast(t("toast.linkcopied")); }
+    catch { toast(url); }
+  }
+}
 function openDetail(b){
   openSheet(`<div class="detail">${coverEl(b)}<h2>${esc(b.title)}</h2>
     <p class="muted">${esc(b.author || "")}${b.category ? " · " + esc(b.category) : ""}</p>
     ${b.description ? `<p>${esc(b.description)}</p>` : ""}
-    <div class="row" style="margin-top:14px"><strong class="price" style="font-size:22px">${money(b.price)}</strong><div class="grow"></div><button class="btn" id="goBuy">${esc(t("buy"))}</button></div></div>`,
-    () => $("goBuy").onclick = () => startBuy(b));
+    <div class="row" style="margin-top:14px;flex-wrap:wrap;gap:8px">
+      <strong class="price" style="font-size:22px">${money(b.price)}</strong>
+      <div class="grow"></div>
+      <button class="btn ghost" id="goShare" type="button">${esc(t("share"))}</button>
+      <button class="btn" id="goBuy">${esc(t("buy"))}</button>
+    </div></div>`,
+    () => {
+      $("goBuy").onclick = () => startBuy(b);
+      $("goShare").onclick = () => shareBook(b);
+    });
 }
 
 function openAuth(after, startMode){
