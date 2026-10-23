@@ -160,15 +160,15 @@ $("heroBrowse").onclick = () => goAll();
 $("heroAcct").onclick = () => state.user ? showOrders() : openAuth(null, "up");
 $("btnOrders").onclick = showOrders;
 
-const hue = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+function hue(s){ let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; }
 function coverEl(b){
   const h = hue(b.title || ""), u = safeUrl(b.cover);
   const bg = `linear-gradient(145deg,hsl(${h} 32% 16%),hsl(${(h + 30) % 360} 30% 8%))`;
   return `<div class="cover" style="background:${bg}"><div class="ct"><i></i><b>${esc(b.title || "")}</b><i></i></div>${u ? `<img src="${esc(u)}" alt="${esc(b.title || "")}" loading="lazy" onerror="this.remove()">` : ""}</div>`;
 }
-const card = b => `<article class="book" data-id="${esc(b.id)}">${coverEl(b)}
+function card(b){ return `<article class="book" data-id="${esc(b.id)}">${coverEl(b)}
   <div class="info"><h3>${esc(b.title)}</h3><div class="au">${esc(b.author || "")}</div>
-  <div class="bt"><span class="price">${money(b.price)}</span><button class="btn sm" data-buy="${esc(b.id)}">${esc(t("buy"))}</button></div></div></article>`;
+  <div class="bt"><span class="price">${money(b.price)}</span><button class="btn sm" data-buy="${esc(b.id)}">${esc(t("buy"))}</button></div></div></article>`; }
 
 function renderChips(){
   const all = t("chip.all");
