@@ -76,7 +76,9 @@
     <div class="cols">
       <div><h4>Kantymamiratra</h4><div data-i="foot.about">Fivarotana boky PDF.Mora, tsotra sy haingana ary azo antoka.</div></div>
       <div><h4 data-i="foot.links">Rohy</h4><a data-f="home" data-i="nav.home">Fandraisana</a><a data-f="all" data-i="all.title">Ny boky rehetra</a><a data-f="orders" data-i="nav.orders">Baiko</a></div>
-      <div><h4 data-i="foot.pay">Fandoavana</h4><div>MVola</div><div class="small" data-i="foot.paynote.manual">Hojerena ny SMS ary hamarinina ny baikonao.</div></div>
+      <div><h4 data-i="foot.pay">Fandoavana</h4>
+        <div class="mvola-line"><span class="mvola-logo" aria-hidden="true"><svg viewBox="0 0 32 32" width="18" height="18"><circle cx="16" cy="16" r="15" fill="#00a651"/><text x="16" y="21" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" font-family="system-ui,sans-serif">M</text></svg></span><span class="mvola-brand">MVola</span></div>
+        <div class="small" data-i="foot.paynote.manual">Hojerena ny SMS ary hamarinina ny baikonao.</div></div>
     </div>
     <div class="copy">© Kantymamiratra</div>
   </div>
@@ -304,8 +306,9 @@ function startBuy(b){
   if (!state.user) { openAuth(() => startBuy(b)); return; }
   openSheet(`<h2>${esc(t("buy.title", { t: b.title }))}</h2>
     <ol class="steps">
-      <li><b>${esc(t("buy.m.s1", { p: money(b.price) }))}</b>
-        <div class="numbox"><span>${esc(MVOLA_NUMBER)}</span><button class="btn ghost sm" id="cp">${esc(t("buy.copy"))}</button></div></li>
+      <li><b>${esc(t("buy.m.s1", { p: money(b.price) }))} <span class="mvola-brand">MVola</span></b>
+        <div class="numbox"><span>${esc(MVOLA_NUMBER)}</span><button class="btn ghost sm" id="cp">${esc(t("buy.copy"))}</button></div>
+        <div class="mvola-holder"><span class="muted small">${esc(t("buy.m.holderlbl"))}</span> <b>${esc(t("buy.m.holder"))}</b></div></li>
       <li><b>${esc(t("buy.m.s2"))}</b>
         <input id="bPhone" type="tel" inputmode="tel" placeholder="${esc(t("buy.m.phone"))}">
         <input id="bRef" placeholder="${esc(t("buy.m.ref"))}"></li>
