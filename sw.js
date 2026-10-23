@@ -1,4 +1,4 @@
-const C = "kmt-v8";
+const C = "kmt-v9";
 const SHELL = ["./", "./index.html", "./style.css", "./firebase-config.js", "./i18n.js", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
