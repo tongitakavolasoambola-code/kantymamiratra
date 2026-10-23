@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="mg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title data-i="a.title">Admin · Kantymamiratra</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#14110d">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap row">
+    <a class="brand" href="./admin.html"><span class="logo">🔐</span>Admin</a>
+    <div class="grow"></div>
+    <div class="lang" role="group" aria-label="Langue / Fiteny"><button data-l="mg">MG</button><button data-l="fr">FR</button></div>
+    <a class="btn ghost sm" href="./" data-i="a.site"></a>
+    <button class="btn ghost sm hide" id="out" data-i="a.out"></button>
+  </div>
+</header>
+
+<main class="wrap" style="padding-top:18px;padding-bottom:40px">
+  <div id="auth" class="card" style="max-width:420px;margin:20px auto">
+    <h2 data-i="a.login.title"></h2>
+    <input id="email" type="email" data-ip="a.email" autocomplete="email">
+    <input id="pass" type="password" data-ip="a.pass" autocomplete="current-password">
+    <button class="btn block" id="login" style="margin-top:8px" data-i="a.login"></button>
+    <p id="msg" style="color:var(--bad);font-size:14px"></p>
+  </div>
+
+  <div id="panel" class="hide">
+    <div class="tabs" id="tabs" style="max-width:520px">
+      <button data-t="pending" class="on"><span data-i="a.tab.orders"></span> <span id="cnt"></span></button>
+      <button data-t="books" data-i="a.tab.books"></button>
+      <button data-t="history" data-i="a.tab.hist"></button>
+    </div>
+
+    <section id="tPending"></section>
+
+    <section id="tBooks" class="hide">
+      <div class="card">
+        <h3 id="formTitle" data-i="a.form.add"></h3>
+        <div class="two">
+          <div><label data-i="a.f.title"></label><input id="fTitle"></div>
+          <div><label data-i="a.f.author"></label><input id="fAuthor"></div>
+          <div><label data-i="a.f.cat"></label><input id="fCat" data-ip="a.f.cat.ph"></div>
+          <div><label data-i="a.f.price"></label><input id="fPrice" type="number" inputmode="numeric" placeholder="5000"></div>
+        </div>
+        <label data-i="a.f.cover"></label><input id="fCover" placeholder="https://…">
+        <label data-i="a.f.desc"></label><textarea id="fDesc" data-ip="a.f.desc.ph"></textarea>
+        <label data-i="a.f.pdf"></label><input id="fPdf" placeholder="https://…">
+        <div class="row" style="margin-top:8px"><button class="btn grow" id="fSave" data-i="a.save"></button><button class="btn ghost hide" id="fCancel" data-i="a.cancel"></button></div>
+      </div>
+      <div id="bookList"></div>
+    </section>
+
+    <section id="tHistory" class="hide"></section>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script type="module">
+import { firebaseConfig } from "./firebase-config.js";
+import { t, initLang } from "./i18n.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, getDocs, addDoc, setDoc, updateDoc, deleteDoc, getDoc, doc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app), db = getFirestore(app);
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl = u => /^https:\/\//i.test(String(u || "").trim()) ? String(u).trim() : "";
+const money = n => Number(n || 0).toLocaleString("fr-FR") + " Ar";
+const fmt = o => o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }) : "";
+function toast(msg){ const d = document.createElement("div"); d.textContent = msg; $("toast").appendChild(d); setTimeout(() => d.remove(), 3400); }
+
+let orders = [], books = [], editId = null, loggedIn = false;
+
+/* ---------- Auth ---------- */
+$("login").onclick = () => {
+  $("msg").textContent = "";
+  signInWithEmailAndPassword(auth, $("email").value.trim(), $("pass").value).catch(() => $("msg").textContent = t("a.badlogin"));
+};
+$("out").onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, async user => {
+  if (!user) { loggedIn = false; $("auth").classList.remove("hide"); $("panel").classList.add("hide"); $("out").classList.add("hide"); return; }
+  let ok = false;
+  try { ok = (await getDoc(doc(db, "admins", user.uid))).exists(); } catch {}
+  if (!ok) { $("msg").textContent = t("a.notadmin"); await signOut(auth); return; }
+  loggedIn = true;
+  $("auth").classList.add("hide"); $("panel").classList.remove("hide"); $("out").classList.remove("hide");
+  await refreshAll();
+});
+
+/* ---------- Tabs ---------- */
+$("tabs").onclick = e => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
+  $("tPending").classList.toggle("hide", b.dataset.t !== "pending");
+  $("tBooks").classList.toggle("hide", b.dataset.t !== "books");
+  $("tHistory").classList.toggle("hide", b.dataset.t !== "history");
+};
+
+async function refreshAll(){
+  const [o, b] = await Promise.all([getDocs(collection(db, "orders")), getDocs(collection(db, "books"))]);
+  orders = o.docs.map(d => ({ id: d.id, ...d.data() })).sort((x, y) => (y.createdAt?.seconds || 0) - (x.createdAt?.seconds || 0));
+  books = b.docs.map(d => ({ id: d.id, ...d.data() })).sort((x, y) => (y.createdAt?.seconds || 0) - (x.createdAt?.seconds || 0));
+  renderAll();
+}
+function renderAll(){ renderPending(); renderHistory(); renderBooks(); }
+
+/* ---------- Orders ---------- */
+function renderPending(){
+  const list = orders.filter(o => o.status === "pending");
+  $("cnt").textContent = list.length ? `(${list.length})` : "";
+  const refs = {}; orders.forEach(o => { const k = String(o.mvolaRef || "").trim().toLowerCase(); if (k) refs[k] = (refs[k] || 0) + 1; });
+  $("tPending").innerHTML = list.length ? `<div class="cards">` + list.map(o => {
+    const k = String(o.mvolaRef || "").trim().toLowerCase(), dup = k && refs[k] > 1;
+    return `<div class="card ord" data-id="${esc(o.id)}">
+      <div class="t"><div><b>${esc(o.bookTitle)}</b>${o.method === "mvola-auto" ? `<span class="tag auto">${esc(t("a.auto"))}</span>` : ""}<div class="muted small">${fmt(o)}</div></div><b class="price">${money(o.amount)}</b></div>
+      <p style="margin:10px 0 4px" class="small">${esc(o.email)}<br>${esc(t("a.tel"))}: <b>${esc(o.phone)}</b>${o.mvolaRef ? `<br>${esc(t("a.ref"))}: <b>${esc(o.mvolaRef)}</b>` : ""}</p>
+      ${dup ? `<div class="dup">${esc(t("a.dup"))}</div>` : ""}
+      <div class="row" style="margin-top:10px"><button class="btn ok grow" data-act="ok">${esc(t("a.valid"))}</button><button class="btn bad grow" data-act="no">${esc(t("a.reject"))}</button></div></div>`;
+  }).join("") + `</div>` : `<div class="empty">${esc(t("a.none.pending"))}</div>`;
+}
+$("tPending").onclick = async e => {
+  const btn = e.target.closest("[data-act]"); if (!btn) return;
+  const id = btn.closest("[data-id]").dataset.id, o = orders.find(x => x.id === id); if (!o) return;
+  btn.disabled = true;
+  try {
+    if (btn.dataset.act === "ok") {
+      const f = await getDoc(doc(db, "bookFiles", o.bookId));
+      if (!f.exists() || !safeUrl(f.data().pdfUrl)) { toast(t("a.nopdf")); btn.disabled = false; return; }
+      await setDoc(doc(db, "deliveries", id), { uid: o.uid, pdfUrl: f.data().pdfUrl });
+      await updateDoc(doc(db, "orders", id), { status: "paid" });
+      toast(t("a.toast.valid"));
+    } else {
+      if (!confirm(t("a.confirm.reject"))) { btn.disabled = false; return; }
+      await updateDoc(doc(db, "orders", id), { status: "rejected" });
+      toast(t("a.toast.rej"));
+    }
+    await refreshAll();
+  } catch (err) { toast(t("a.err", { c: err.code || err.message })); btn.disabled = false; }
+};
+function renderHistory(){
+  const list = orders.filter(o => o.status !== "pending");
+  $("tHistory").innerHTML = list.length ? `<div class="cards">` + list.map(o => `<div class="card ord">
+    <div class="t"><div><b>${esc(o.bookTitle)}</b><div class="muted small">${fmt(o)} · ${esc(o.email)}</div><div class="muted small">${o.mvolaRef ? esc(t("a.ref")) + ": " + esc(o.mvolaRef) + " · " : ""}${esc(o.phone)}</div></div>
+    <div style="text-align:right"><span class="tag ${esc(o.status)}">${esc(t(o.status === "paid" ? "a.st.paid" : "a.st.rej"))}</span><div class="price small" style="margin-top:4px">${money(o.amount)}</div></div></div></div>`).join("") + `</div>` : `<div class="empty">${esc(t("a.none.hist"))}</div>`;
+}
+
+/* ---------- Books ---------- */
+function renderBooks(){
+  $("formTitle").textContent = t(editId ? "a.form.edit" : "a.form.add");
+  $("fSave").textContent = t(editId ? "a.saveedit" : "a.save");
+  $("bookList").innerHTML = books.length ? `<div class="cards">` + books.map(b => `<div class="card row" data-id="${esc(b.id)}">
+    <div class="grow"><b>${esc(b.title)}</b><div class="muted small">${esc(b.author || "")} ${b.category ? "· " + esc(b.category) : ""}</div><div class="price">${money(b.price)}</div></div>
+    <button class="btn ghost sm" data-act="edit">${esc(t("a.edit"))}</button><button class="btn bad sm" data-act="del">${esc(t("a.del"))}</button></div>`).join("") + `</div>` : `<div class="empty">${esc(t("a.none.books"))}</div>`;
+}
+function resetForm(){
+  editId = null; ["fTitle","fAuthor","fCat","fPrice","fCover","fDesc","fPdf"].forEach(i => $(i).value = "");
+  $("fCancel").classList.add("hide"); renderBooks();
+}
+$("fCancel").onclick = resetForm;
+$("fSave").onclick = async () => {
+  const data = { title: $("fTitle").value.trim(), author: $("fAuthor").value.trim(), category: $("fCat").value.trim(),
+    price: Number($("fPrice").value), cover: $("fCover").value.trim(), description: $("fDesc").value.trim() };
+  const pdf = $("fPdf").value.trim();
+  if (!data.title || !(data.price > 0)) return toast(t("a.v.fill"));
+  if (!safeUrl(pdf)) return toast(t("a.v.pdf"));
+  if (data.cover && !safeUrl(data.cover)) return toast(t("a.v.cover"));
+  $("fSave").disabled = true;
+  try {
+    if (editId) { await updateDoc(doc(db, "books", editId), data); await setDoc(doc(db, "bookFiles", editId), { pdfUrl: pdf }); }
+    else { const r = await addDoc(collection(db, "books"), { ...data, createdAt: serverTimestamp() }); await setDoc(doc(db, "bookFiles", r.id), { pdfUrl: pdf }); }
+    toast(t("a.toast.saved")); resetForm(); await refreshAll();
+  } catch (e) { toast(t("a.err", { c: e.code || e.message })); }
+  $("fSave").disabled = false;
+};
+$("bookList").onclick = async e => {
+  const btn = e.target.closest("[data-act]"); if (!btn) return;
+  const id = btn.closest("[data-id]").dataset.id, b = books.find(x => x.id === id); if (!b) return;
+  if (btn.dataset.act === "edit") {
+    editId = id; $("fTitle").value = b.title || ""; $("fAuthor").value = b.author || ""; $("fCat").value = b.category || "";
+    $("fPrice").value = b.price || ""; $("fCover").value = b.cover || ""; $("fDesc").value = b.description || "";
+    try { const f = await getDoc(doc(db, "bookFiles", id)); $("fPdf").value = f.exists() ? f.data().pdfUrl : ""; } catch {}
+    $("fCancel").classList.remove("hide"); renderBooks();
+    scrollTo({ top: 0, behavior: "smooth" });
+  } else if (confirm(t("a.confirm.del", { t: b.title }))) {
+    try { await deleteDoc(doc(db, "books", id)); await deleteDoc(doc(db, "bookFiles", id)); toast(t("a.toast.deleted")); await refreshAll(); }
+    catch (err) { toast(t("a.err", { c: err.code || err.message })); }
+  }
+};
+
+initLang(() => { if (loggedIn) renderAll(); });
+</script>
+</body>
+</html>
