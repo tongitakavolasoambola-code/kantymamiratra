@@ -6,7 +6,7 @@ mg: {
   "nav.home": "Fandraisana", "nav.books": "Boky", "nav.orders": "Baiko",
   "acct.login": "Miditra", "acct.me": "Kaontiko",
   "hero.h1": "Ny boky iray, fiainana vaovao iray.",
-  "hero.p": "Mividy fiainana vaovao sady mamboly fahombiazana raha vao mividy boky iray ianao","Aloa amin'ny Mvola ka rehefa voamarina ny fandoavanao dia hiseho ao amin'ny kaontinao ny boky PDF.",
+  "hero.p": "Mividy fiainana vaovao sady mamboly fahombiazana raha vao mividy boky iray ianao. Aloa amin'ny MVola ka rehefa voamarina ny fandoavanao dia hiseho ao amin'ny kaontinao ny boky PDF.",
   "hero.browse": "Jereo ny boky", "hero.signup": "Hamorona kaonty", "hero.myorders": "Kaomandiko",
   "search.ph": "Hitady boky na mpanoratra…",
   "banner.title": "Alao ny application", "banner.sub": "Haingana kokoa ary mora tadiavina", "banner.install": "Apetaho",
@@ -90,7 +90,7 @@ fr: {
   "nav.home": "Accueil", "nav.books": "Livres", "nav.orders": "Commandes",
   "acct.login": "Connexion", "acct.me": "Mon compte",
   "hero.h1": "Vos livres, disponibles immédiatement.",
-  "hero.p": "Achetez une nouvelle vie et cultivez votre réussite dès l’achat d’un livre.","Payez via MVola et, une fois votre paiement confirmé, votre livre PDF apparaîtra dans votre compte.",
+  "hero.p": "Achetez une nouvelle vie et cultivez votre réussite dès l’achat d’un livre. Payez via MVola et, une fois votre paiement confirmé, votre livre PDF apparaîtra dans votre compte.",
   "hero.browse": "Voir les livres", "hero.signup": "Créer un compte", "hero.myorders": "Mes commandes",
   "search.ph": "Rechercher un livre ou un auteur…",
   "banner.title": "Téléchargez l'application", "banner.sub": "Plus rapide et plus pratique", "banner.install": "Installer",
@@ -172,7 +172,7 @@ fr: {
 
 let lang = "mg";
 try { const s = localStorage.getItem("kmt_lang"); if (s === "fr" || s === "mg") lang = s; } catch {}
-document.documentElement.lang = lang;
+try { if (typeof document !== "undefined") document.documentElement.lang = lang; } catch {}
 
 export const getLang = () => lang;
 export function t(k, v) {
